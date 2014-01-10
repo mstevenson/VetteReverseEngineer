@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ufwb version="1.3">
+    <grammar name="Vette STRT" start="id:8" author="Michael Stevenson" fileextension="" uti="public.data">
+        <description>Grammar for my file format</description>
+        <structure name="Street Names" id="8" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <binary name="Header" id="12" length="1"/>
+            <structure name="Name" id="14" length="12" repeatmax="-1">
+                <binary name="&lt;Binary Fill Bytes&gt;" id="16" unused="yes" length="1"/>
+                <string name="Name String" id="17" type="fixed-length" length="11" encoding="ISO_8859-1:1987"/>
+            </structure>
+        </structure>
+    </grammar>
+</ufwb>

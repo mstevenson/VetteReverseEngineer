@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ufwb version="1.3">
+    <grammar name="Vette Performance Profile" start="id:45" author="Michael Stevenson" fileextension="" uti="public.data">
+        <description>Grammar for my file format</description>
+        <structure name="Performance Profile" id="45" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <binary name="Header" id="48" length="2"/>
+            <binary name="&lt;Binary Fill Bytes&gt;" id="49" unused="yes" length="31"/>
+            <number name="Unknown" id="50" fillcolor="FFD199" type="integer" length="1"/>
+            <binary name="&lt;Binary Fill Bytes-1&gt;" id="51" unused="yes" length="27"/>
+            <number name="Unknown-1" id="52" fillcolor="FEFA9D" type="integer" length="1">
+                <fixedvalues>
+                    <fixedvalue value="4"/>
+                </fixedvalues>
+            </number>
+            <binary name="&lt;Binary Fill Bytes-2&gt;" id="53" unused="yes" length="19"/>
+            <number name="Unknown" id="54" type="integer" length="1"/>
+            <binary name="&lt;Binary Fill Bytes-3&gt;" id="55" unused="yes" length="1"/>
+            <number name="Unknown-2" id="56" type="integer" length="1"/>
+            <binary name="&lt;Binary Fill Bytes-4&gt;" id="57" unused="yes" length="1"/>
+            <number name="Unknown" id="58" type="integer" length="1"/>
+            <binary name="&lt;Binary Fill Bytes-5&gt;" id="59" unused="yes" length="1"/>
+            <number name="Unknown-3" id="60" type="integer" length="1"/>
+            <binary name="&lt;Binary Fill Bytes-6&gt;" id="73" unused="yes" length="1"/>
+            <number name="Unknown" id="74" type="integer" length="1"/>
+            <binary name="&lt;Binary Fill Bytes-7&gt;" id="79" unused="yes" length="8"/>
+            <number name="Unknown ID" id="80" type="integer" length="1" minval="1">
+                <fixedvalues>
+                    <fixedvalue name="&lt;unnamed&gt;" value="1"/>
+                    <fixedvalue name="&lt;unnamed&gt;" value="2"/>
+                </fixedvalues>
+            </number>
+        </structure>
+    </grammar>
+</ufwb>
