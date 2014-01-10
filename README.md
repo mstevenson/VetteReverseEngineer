@@ -23,6 +23,8 @@ Resources are clearly named:
 
 An object resource begins with a file length. Unless otherwise noted, all numbers are 16 bit integers.
 
+Counts begin with 0x00 to specify one entry, so an array of with a given length of 0x02 contains 3 items.
+
 A object file is broken into three contiguous sections: vertices, polygons, and colors.
 
 ### Vertices
@@ -33,13 +35,19 @@ The first vertex specifies the world origin of the object. The next 3 vertices a
 
 ### Polygons
 
-The polygons section begins with a count of total polygons. The first two bytes are always 0x00. The next two bytes specify a drawing mode:
+The polygons section begins with a count of total polygons. The first integer specify a drawing mode:
 
- * 0x00 - unknown
- * 0x01 - quad
- * 0x04 - line
+ * 0x0000 - unknown (possibly triangle)
+ * 0x0001 - filled quad
+ * 0x0004 - line
+ 
+The second integer is unknown, but may reference a color from later in the file.
 
-The next data specifies vertex connections by vertex array index.
+The third integer specifies the count of vertex records that follow.
+
+The next data is a list of vertex array indices that specify connections between vertices. This data is misaligned and must be shifted to the right by 4 bits. This may indicate that an extra 4 bits of data is shoehorned in somewhere.
+
+A polygon is always defined as a closed shape that draws a line back to its first vertex, so a quad that is made up of vertices 1, 2, 3, 4 will list its vertex connections as 1-2-3-4-1 and have a vertex count of 5 (0x04, again counting from 0x00 representing 1).
 
 #### Quads
 
