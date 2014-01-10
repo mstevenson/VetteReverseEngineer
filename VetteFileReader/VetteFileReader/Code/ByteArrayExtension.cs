@@ -1,6 +1,8 @@
 using System;
 namespace VetteFileReader
 {
+	// http://stackoverflow.com/questions/1275572/bit-shifting-n-bits
+
 	public static class ByteArrayExtension
 	{
 		public static byte[] ShiftLeft (this byte[] value, int bitcount)

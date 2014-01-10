@@ -1,0 +1,6 @@
+VetteUnityEditor/Library/
+VetteUnityEditor/Temp/
+VetteUnityEditor/*.csproj
+VetteUnityEditor/*.sln
+VetteFileReader/obj/
+VetteFileReader/VetteFileReader/obj/

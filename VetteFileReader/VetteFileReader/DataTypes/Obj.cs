@@ -8,22 +8,22 @@ namespace VetteFileReader
 	public struct Obj : IParsable
 	{
 		public int fileLength;
-		public Vertices vertices;
-		public GeoElements geoElements;
+		public VertexArray vertices;
+		public PolygonArray polygons;
 
 		public void Parse (BinaryReaderBigEndian reader)
 		{
 			fileLength = reader.ReadUInt16 ();
 
-			vertices = new Vertices ();
+			vertices = new VertexArray ();
 			vertices.Parse (reader);
 
-			geoElements = new GeoElements ();
-			geoElements.Parse (reader);
+			polygons = new PolygonArray ();
+			polygons.Parse (reader);
 		}
 	}
 
-	public struct Vertices : IParsable
+	public struct VertexArray : IParsable
 	{
 		public int vertexCount;
 		// vert1: pivot point
@@ -62,19 +62,19 @@ namespace VetteFileReader
 		}
 	}
 
-	public struct GeoElements : IParsable
+	public struct PolygonArray : IParsable
 	{
-		public int geoCount;
-		public Geo[] geos;
+		public int polyCount;
+		public Polygon[] polys;
 
 		public void Parse (BinaryReaderBigEndian reader)
 		{
-			geoCount = reader.ReadInt16 () + 1; // length of 0 indicates one quad
-			geos = new Geo[geoCount];
+			polyCount = reader.ReadInt16 () + 1; // length of 0 indicates one quad
+			polys = new Polygon[polyCount];
 
-			for (int i = 0; i < geoCount; i++) {
-				geos [i] = new Geo ();
-				geos [i].Parse (reader);
+			for (int i = 0; i < polyCount; i++) {
+				polys [i] = new Polygon ();
+				polys [i].Parse (reader);
 			}
 		}
 	}
@@ -85,64 +85,36 @@ namespace VetteFileReader
 		Line = 4,
 	}
 
-	public struct Geo : IParsable
+	public struct Polygon : IParsable
 	{
 		public DrawMode drawMode;
-		public Poly line;
+		public int unknown;
+		public int vertexCount;
+		public int[] vertexIndices;
 
 		public void Parse (BinaryReaderBigEndian reader)
 		{
 			drawMode = (DrawMode)reader.ReadInt16 ();
 
-			switch (drawMode) {
-			case DrawMode.Line:
-				line = new Poly ();
-				line.Parse (reader);
-				Console.WriteLine (line.vertIndexA);
-				break;
-			case DrawMode.Quad:
-				reader.ReadBytes (14);
-				break;
+			unknown = reader.ReadInt16 ();
+
+			vertexCount = reader.ReadInt16 () + 1; // lengths always start with 0 to represent 1 element
+			vertexIndices = new int[vertexCount];
+
+			// The list of vertex indices are shifted by 4 bits to the left for an unknown reason.
+			byte[] vertexIndexData = reader.ReadBytes (2 * vertexCount);
+			byte[] shiftedBytes = vertexIndexData.ShiftLeft (4);
+
+			for (int i = 0; i < vertexCount; i++) {
+				var indexBytes = new byte[] { shiftedBytes[(2*i)], shiftedBytes[(2*i)+1]};
+				vertexIndices[i] = BitConverter.ToInt16 (indexBytes, 0);
 			}
 
-			//padding 0xFFFF
-			reader.ReadBytes (2);
+			var terminator = reader.ReadBytes (2);
+			if (terminator[0] != 0xFF || terminator[1] != 0xFF) {
+				// TODO exception
+			}
 		}
-	}
-
-	public struct Poly : IParsable
-	{
-		public int unknown;
-		public int unknown2; // seems often to be 0x0002 when drawing lines, like Hwy1 obj
-
-		public int vertIndexA;
-		public int vertIndexB;
-		public int vertIndexC;
-
-		public void Parse (BinaryReaderBigEndian reader)
-		{
-			unknown = reader.ReadInt16 ();
-			unknown2 = reader.ReadInt16 ();
-
-			// Now things get weird. There are 3 Int16s representing vertex indices that
-			// form a line segment connecting vertices A-B-A, but these Int16s are shifted
-			// by 4 bits to the left for an unknown reason.
-
-			var bytes = reader.ReadBytes (6);
-			var shiftedBytes = bytes.ShiftLeft (4);
-
-			// Index of each vertex forming the line segment
-			vertIndexA = BitConverter.ToInt16 (shiftedBytes, 0);
-			vertIndexB = BitConverter.ToInt16 (shiftedBytes, 2);
-
-			// When drawing lines, this is always the same value as vertIndexA so it can be ignored
-			vertIndexC = BitConverter.ToInt16 (shiftedBytes, 4);
-		}
-
-
-		// http://stackoverflow.com/questions/1275572/bit-shifting-n-bits
-
-
 	}
 }
 

@@ -7,11 +7,14 @@ using VetteFileReader;
 [ExecuteInEditMode]
 public class RenderVetteModel : MonoBehaviour {
 
-	public Obj obj;
+	public string objectFile;
+
+	Obj obj;
 
 	void OnEnable ()
 	{
-		obj = FileParser.Parse<Obj> (@"/Users/mike/Desktop/vette_models/lawyer");
+		var path = Application.dataPath + "/../../Data/Resources/OBJS/" + objectFile;
+		obj = FileParser.Parse<Obj> (path);
 	}
 
 	void OnDrawGizmosSelected () {
@@ -23,6 +26,7 @@ public class RenderVetteModel : MonoBehaviour {
 
 			for (int i = 0; i < obj.vertices.vertices.Length; i++) {
 				var v = obj.vertices.vertices[i];
+				Vector3 position = new Vector3 (v.x, -v.y, v.z);
 				if (i == 0) {
 					Gizmos.color = Color.yellow;
 				} else if (i == 1) {
@@ -34,16 +38,20 @@ public class RenderVetteModel : MonoBehaviour {
 				} else {
 					Gizmos.color = Color.cyan;
 				}
-				Gizmos.DrawCube (new Vector3 (v.x, -v.y, v.z), Vector3.one * 20f);
+				Gizmos.DrawCube (position, Vector3.one * 20f);
 			}
 
-			for (int i = 0; i < obj.geoElements.geoCount; i++) {
-				var g = obj.geoElements.geos[i];
-				var verts = obj.vertices.vertices;
-				if (g.drawMode == DrawMode.Line) {
-					var va = verts[g.line.vertIndexA];
-					var vb = verts[g.line.vertIndexB];
-					Gizmos.DrawLine (new Vector3 (va.x, -va.y, va.z), new Vector3 (vb.x, -vb.y, vb.z));
+//			int vertIndexOffset = 4; // the world origin and 3 scale vertrs are excluded
+
+			var allVertices = obj.vertices.vertices;
+			var polygons = obj.polygons.polys;
+
+			for (int p = 0; p < obj.polygons.polyCount; p++) {
+				var vertIndices = polygons[p].vertexIndices;
+				for (int v = 1; v < vertIndices.Length; v++) {
+					Vertex lineStart = allVertices [vertIndices [v - 1]];
+					Vertex lineEnd = allVertices [vertIndices [v]];
+					Gizmos.DrawLine (new Vector3 (lineStart.x, -lineStart.y, lineStart.z), new Vector3 (lineEnd.x, -lineEnd.y, lineEnd.z));
 				}
 			}
 		}
