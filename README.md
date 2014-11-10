@@ -35,13 +35,13 @@ The first vertex specifies the world origin of the object. The next 3 vertices a
 
 ### Polygons
 
-The polygons section begins with a count of total polygons. The first integer specify a drawing mode:
+The polygons section begins with a count of total polygons. The first integer specifies a drawing mode:
 
- * 0x0000 - unknown (possibly triangle)
+ * 0x0000 - unknown
  * 0x0001 - filled quad
  * 0x0004 - line
  
-The second integer is unknown, but may reference a color from later in the file.
+The second integer is a color index for the polygon.
 
 The third integer specifies the count of vertex records that follow.
 
