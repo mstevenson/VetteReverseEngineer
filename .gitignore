@@ -4,3 +4,4 @@ VetteUnityEditor/*.csproj
 VetteUnityEditor/*.sln
 VetteFileReader/obj/
 VetteFileReader/VetteFileReader/obj/
+*.userprefs

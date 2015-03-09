@@ -5,7 +5,7 @@ using VetteFileReader;
 // Display a vette model in the editor
 
 [ExecuteInEditMode]
-public class RenderVetteModel : MonoBehaviour {
+public class VetteEditorDisplay : MonoBehaviour {
 
 	public string objectFile;
 
@@ -15,6 +15,9 @@ public class RenderVetteModel : MonoBehaviour {
 	{
 		var path = Application.dataPath + "/../../Data/Resources/OBJS/" + objectFile;
 		obj = FileParser.Parse<Obj> (path);
+		foreach (var p in obj.polygons.polys) {
+			Debug.Log (p.drawMode);
+		}
 	}
 
 	void OnDrawGizmosSelected () {
@@ -40,8 +43,6 @@ public class RenderVetteModel : MonoBehaviour {
 				}
 				Gizmos.DrawCube (position, Vector3.one * 20f);
 			}
-
-//			int vertIndexOffset = 4; // the world origin and 3 scale vertrs are excluded
 
 			var allVertices = obj.vertices.vertices;
 			var polygons = obj.polygons.polys;
