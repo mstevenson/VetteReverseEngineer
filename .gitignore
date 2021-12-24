@@ -6,3 +6,4 @@ VetteFileReader/obj/
 VetteFileReader/VetteFileReader/obj/
 *.userprefs
 .DS_Store
+xcuserdata/
