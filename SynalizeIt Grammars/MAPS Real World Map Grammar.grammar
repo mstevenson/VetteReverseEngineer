@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ufwb version="1.17">
+    <grammar name="Real World Map Data" start="id:66" author="Michael Stevenson">
+        <description>Grammar for my file format</description>
+        <structure name="RealWorldMapData" id="66" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structure name="Headder" id="79" length="180">
+                <binary name="&lt;new binary&gt;" id="68" fillcolor="CDFFFC" length="remaining"/>
+            </structure>
+            <structure name="StructA" id="69" length="104" repeatmax="6">
+                <binary name="&lt;new binary&gt;" id="71" length="remaining"/>
+            </structure>
+            <structure name="StructB" id="73" length="106" alignment="0" repeatmax="6">
+                <binary name="&lt;new binary&gt;" id="74" length="remaining"/>
+            </structure>
+            <structure name="StructC" id="76" length="108" alignment="0" repeatmax="-1">
+                <binary name="&lt;new binary&gt;" id="77" length="remaining"/>
+            </structure>
+        </structure>
+    </grammar>
+</ufwb>

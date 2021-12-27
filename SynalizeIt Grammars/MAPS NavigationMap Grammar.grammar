@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ufwb version="1.17">
+    <grammar name="MAPS NavigationMap Grammar" start="id:1" author="Michael Stevenson">
+        <description>Grammar for my file format</description>
+        <structure name="MAPS Resource" id="1" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structure name="Block" id="2" length="208" repeatmax="-1">
+                <structure name="Header" id="19" repeatmax="4">
+                    <number name="A" id="3" fillcolor="FFCABA" type="integer" length="2"/>
+                </structure>
+                <structure name="&lt;new structure-1&gt;" id="17">
+                    <number name="B" id="13" fillcolor="F8FD98" type="integer" length="2"/>
+                </structure>
+                <structure name="&lt;new structure&gt;" id="15" repeatmax="7">
+                    <number name="C" id="14" fillcolor="F2BCFF" type="integer" length="2"/>
+                </structure>
+                <structure name="&lt;new structure-3&gt;" id="21" repeatmax="-1">
+                    <number name="&lt;new number&gt;" id="23" fillcolor="E2FFF2" type="integer" length="2"/>
+                </structure>
+            </structure>
+        </structure>
+    </grammar>
+</ufwb>
