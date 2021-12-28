@@ -2,26 +2,96 @@
 <ufwb version="1.17">
     <grammar name="QUAD Resource" start="id:1" author="Michael Stevenson">
         <description>Grammar for my file format</description>
-        <structure name="QUAD" id="1" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <structure name="QuadCount" id="20" length="2" valueexpression="QuadCountA + QuadCountB">
-                <number name="QuadCountA" id="6" fillcolor="43C457" type="integer" length="1"/>
-                <number name="QuadCountB" id="22" fillcolor="43C457" type="integer" length="1"/>
-            </structure>
-            <structure name="Quad" id="17" length="144" repeatmax="-1">
-                <structure name="Object" id="3" length="16" repeatmax="-1">
-                    <number name="A" id="7" fillcolor="FFD7BB" type="integer" length="1"/>
-                    <number name="B" id="16" fillcolor="FFD7BB" type="integer" length="1"/>
-                    <number name="C" id="8" type="integer" length="1"/>
-                    <number name="D" id="19" type="integer" length="1"/>
-                    <number name="E" id="9" type="integer" length="2"/>
-                    <number name="F" id="10" type="integer" length="2"/>
-                    <number name="G" id="11" type="integer" length="2"/>
-                    <number name="H" id="12" type="integer" length="2"/>
-                    <number name="I" id="13" type="integer" length="2"/>
-                    <number name="J" id="14" type="integer" length="1"/>
-                    <number name="K" id="15" type="integer" length="1"/>
+        <structure name="QUAD" id="1" length="0" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="QuadCountA" id="2" fillcolor="43C457" type="integer" length="1" valueexpression="QuadCountA"/>
+            <number name="QuadCountB" id="3" fillcolor="43C457" type="integer" length="1" valueexpression="QuadCountB"/>
+            <binary name="A" id="37" length="4014"/>
+            <structure name="Quad" id="4" length="0">
+                <structure name="Models x5" id="141">
+                    <structref name="Model" id="143" repeatmax="5" structure="id:6"/>
+                    <binary name="Separator" id="144" fillcolor="EAFF00" length="2"/>
                 </structure>
+                <structref name="Street" id="62" structure="id:47"/>
+                <structure name="Models x1" id="184" length="0" alignment="0">
+                    <structref name="Model" id="185" structure="id:6"/>
+                    <binary name="Separator" id="186" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street2" id="63" structure="id:47"/>
+                <structure name="Models x4" id="163" length="0" alignment="0">
+                    <structref name="Model" id="164" repeatmax="4" structure="id:6"/>
+                    <binary name="Separator" id="165" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street A" id="110" structure="id:47"/>
+                <structref name="Modelx1 A" id="111" structure="id:100"/>
+                <structref name="Street B" id="112" structure="id:47"/>
+                <structref name="Modelx1 B" id="113" structure="id:100"/>
+                <structref name="Street C" id="114" structure="id:47"/>
+                <structref name="Modelx1 C" id="115" structure="id:100"/>
+                <structref name="Street D" id="116" structure="id:47"/>
+                <structref name="Modelx1 D" id="117" structure="id:100"/>
+                <structref name="Street E" id="118" structure="id:47"/>
+                <structure name="Models x3-1" id="169" length="0" alignment="0">
+                    <structref name="Model" id="170" repeatmax="3" structure="id:6"/>
+                    <binary name="Separator" id="171" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street-1" id="174" structure="id:47"/>
+                <structure name="Streets" id="149" length="0" alignment="0"/>
+                <binary name="Padding" id="182" length="18"/>
+                <structref name="Street E-1" id="183" structure="id:47"/>
+                <structure name="Models x1 2" id="191" length="0" alignment="0">
+                    <structref name="Model" id="192" structure="id:6"/>
+                    <binary name="Separator" id="193" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street E-1-1" id="195" structure="id:47"/>
+                <structure name="Models x1 2-1" id="196" length="0" alignment="0">
+                    <structref name="Model" id="197" repeatmax="2" structure="id:6"/>
+                    <binary name="Separator" id="198" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street E-1-1-1" id="202" structure="id:47"/>
+                <structure name="Models x1 2-1-1" id="203" length="0" alignment="0">
+                    <structref name="Model" id="204" repeatmax="3" structure="id:6"/>
+                    <binary name="Separator" id="205" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street E-1-1-1-1" id="207" structure="id:47"/>
+                <structure name="Models x1 2-1-1-1" id="208" length="0" alignment="0">
+                    <structref name="Model" id="209" structure="id:6"/>
+                    <binary name="Separator" id="210" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street E-1-1-1-1-1" id="212" structure="id:47"/>
+                <structure name="Models x1 2-1-1-1-1" id="213" length="0" alignment="0">
+                    <structref name="Model" id="214" repeatmax="3" structure="id:6"/>
+                    <binary name="Separator" id="215" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street E-1-1-1-1-1-1" id="217" structure="id:47"/>
+                <structure name="Models x1 2-1-1-1-1-1" id="218" length="0" alignment="0">
+                    <structref name="Model" id="219" structure="id:6"/>
+                    <binary name="Separator" id="220" fillcolor="EAFF00" length="2"/>
+                </structure>
+                <structref name="Street E-1-1-1-1-1-1-1" id="222" structure="id:47"/>
             </structure>
+        </structure>
+        <structure name="Streets" id="47" length="38" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <binary name="NewRecordDelimeter" id="154" fillcolor="DBC4AF" length="2"/>
+            <number name="Warp" id="156" fillcolor="FFBE96" type="integer" length="2"/>
+            <structure name="Road" id="180" repeatmax="4">
+                <number name="RoadType" id="161" fillcolor="C2F3ED" type="integer" length="2"/>
+                <binary name="Flags" id="158" fillcolor="FFE4C9" length="6"/>
+            </structure>
+            <binary name="Separator" id="43" fillcolor="EAFF00" length="2"/>
+        </structure>
+        <structure name="Model" id="6" length="8" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="ModelID" id="7" fillcolor="FF89FE" type="integer" length="2">
+                <fixedvalues>
+                    <fixedvalue name="Warehouse" value="76"/>
+                </fixedvalues>
+            </number>
+            <number name="PosX" id="11" fillcolor="FF6857" type="integer" length="2"/>
+            <number name="PosY" id="13" fillcolor="00F53C" type="integer" length="2"/>
+            <number name="PosZ" id="9" fillcolor="00B2FF" type="integer" length="2"/>
+        </structure>
+        <structure name="Modelx1" id="100" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Model" id="103" structure="id:6"/>
+            <binary name="Separator" id="104" fillcolor="EAFF00" length="2"/>
         </structure>
     </grammar>
 </ufwb>
