@@ -1,97 +1,731 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ufwb version="1.17">
-    <grammar name="QUAD Resource" start="id:1" author="Michael Stevenson">
+    <grammar name="QUAD Resource" start="id:2" author="Michael Stevenson">
         <description>Grammar for my file format</description>
-        <structure name="QUAD" id="1" length="0" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <number name="QuadCountA" id="2" fillcolor="43C457" type="integer" length="1" valueexpression="QuadCountA"/>
-            <number name="QuadCountB" id="3" fillcolor="43C457" type="integer" length="1" valueexpression="QuadCountB"/>
-            <binary name="A" id="37" length="4014"/>
-            <structure name="Quad" id="4" length="0">
-                <structure name="Models x5" id="141">
-                    <structref name="Model" id="143" repeatmax="5" structure="id:6"/>
-                    <binary name="Separator" id="144" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street" id="62" structure="id:47"/>
-                <structure name="Models x1" id="184" length="0" alignment="0">
-                    <structref name="Model" id="185" structure="id:6"/>
-                    <binary name="Separator" id="186" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street2" id="63" structure="id:47"/>
-                <structure name="Models x4" id="163" length="0" alignment="0">
-                    <structref name="Model" id="164" repeatmax="4" structure="id:6"/>
-                    <binary name="Separator" id="165" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street A" id="110" structure="id:47"/>
-                <structref name="Modelx1 A" id="111" structure="id:100"/>
-                <structref name="Street B" id="112" structure="id:47"/>
-                <structref name="Modelx1 B" id="113" structure="id:100"/>
-                <structref name="Street C" id="114" structure="id:47"/>
-                <structref name="Modelx1 C" id="115" structure="id:100"/>
-                <structref name="Street D" id="116" structure="id:47"/>
-                <structref name="Modelx1 D" id="117" structure="id:100"/>
-                <structref name="Street E" id="118" structure="id:47"/>
-                <structure name="Models x3-1" id="169" length="0" alignment="0">
-                    <structref name="Model" id="170" repeatmax="3" structure="id:6"/>
-                    <binary name="Separator" id="171" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street-1" id="174" structure="id:47"/>
-                <structure name="Streets" id="149" length="0" alignment="0"/>
-                <binary name="Padding" id="182" length="18"/>
-                <structref name="Street E-1" id="183" structure="id:47"/>
-                <structure name="Models x1 2" id="191" length="0" alignment="0">
-                    <structref name="Model" id="192" structure="id:6"/>
-                    <binary name="Separator" id="193" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street E-1-1" id="195" structure="id:47"/>
-                <structure name="Models x1 2-1" id="196" length="0" alignment="0">
-                    <structref name="Model" id="197" repeatmax="2" structure="id:6"/>
-                    <binary name="Separator" id="198" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street E-1-1-1" id="202" structure="id:47"/>
-                <structure name="Models x1 2-1-1" id="203" length="0" alignment="0">
-                    <structref name="Model" id="204" repeatmax="3" structure="id:6"/>
-                    <binary name="Separator" id="205" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street E-1-1-1-1" id="207" structure="id:47"/>
-                <structure name="Models x1 2-1-1-1" id="208" length="0" alignment="0">
-                    <structref name="Model" id="209" structure="id:6"/>
-                    <binary name="Separator" id="210" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street E-1-1-1-1-1" id="212" structure="id:47"/>
-                <structure name="Models x1 2-1-1-1-1" id="213" length="0" alignment="0">
-                    <structref name="Model" id="214" repeatmax="3" structure="id:6"/>
-                    <binary name="Separator" id="215" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street E-1-1-1-1-1-1" id="217" structure="id:47"/>
-                <structure name="Models x1 2-1-1-1-1-1" id="218" length="0" alignment="0">
-                    <structref name="Model" id="219" structure="id:6"/>
-                    <binary name="Separator" id="220" fillcolor="EAFF00" length="2"/>
-                </structure>
-                <structref name="Street E-1-1-1-1-1-1-1" id="222" structure="id:47"/>
+        <scripts>
+            <script name="ObjectArray" type="DataType" id="93">
+                <source language="Python">def parseByteRange(element, byteView, bitPos, bitLength, results):
+
+	grammar = currentMapper.getCurrentGrammar()
+	groundStruct = grammar.getStructureByName('Ground')
+	objectStruct = grammar.getStructureByName('Object')
+	paddingStruct = grammar.getStructureByName('Padding')
+	currentPos = currentMapper.getCurrentOffset()
+	
+	#byteRead = 0
+	startPos = bytePos = bitPos / 8
+	#
+	#while (byteRead != 0xFF):
+	#	byteRead = byteView.readByte(bytePos)
+	#	bytePos += 1
+	#	if (byteRead != 0xFF):
+	#		currentMapper.mapStructure(structure)
+	#	else:
+	#		bytePos += 1
+	#
+	#processedBytes = bytePos - startPos
+	
+	#value = NumberValue()
+	
+	#results.addElement(element, processedBytes, 0, value)
+	
+	#processedBytes = currentMapper.mapStructure(objectStruct)
+
+	results = currentMapper.getCurrentResults()
+	results.addStructureStart(objectStruct, startPos, 1, &quot;asdf&quot;, True)
+	results.addStructureEnd(currentPos + 16)
+	
+	return 16
+	
+def fillByteRange(value, byteArray, bitPos, bitLength):
+	'''asdf'''
+	# not implemented</source>
+            </script>
+        </scripts>
+        <structure name="QUAD Resource" id="2" length="0" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="QuadCountA" id="3" fillcolor="43C457" type="integer" length="1" valueexpression="QuadCountA"/>
+            <number name="QuadCountB" id="4" fillcolor="43C457" type="integer" length="1" valueexpression="QuadCountB"/>
+            <scriptelement name="ParseGround" id="5" disabled="yes">
+                <script name="unnamed" type="Generic">
+                    <source language="Python">results = currentMapper.getCurrentResults()
+
+offset = 2
+length = 8
+
+currentGrammar = currentMapper.getCurrentGrammar()
+groundStructure = currentGrammar.getStructureByName('Ground')
+byteView = currentMapper.getCurrentByteView()
+
+# From https://github.com/synalysis/Grammars/blob/master/PokemonROMData.grammar:
+# This redundant pseudo-structure wrapper exists only to record the iteration number
+# StructureMapper cannot render arrays of structures normally
+
+byteRead = byteView.readByte(offset)
+
+while (byteRead != 0xFF):
+	
+	results.addStructureStartAtPosition(groundStructure, 	offset, 0, groundStructure.getName())
+	
+	currentMapper.setCurrentOffset(offset)
+	
+	bytesProcessed = currentMapper.mapStructure(groundStructure)
+	
+	offset = offset + bytesProcessed
+	
+	results.addStructureEnd(offset)
+
+	# bytesProcessed = currentMapper.mapStructureAtPosition(groundStructure, offset, length)</source>
+                </script>
+            </scriptelement>
+            <structure name="Quad-0" id="6">
+                <structref name="Ground" id="8" structure="id:7"/>
+                <structref name="EndGround" id="10" structure="id:9"/>
+                <structref name="EndObjects" id="11" structure="id:9"/>
+            </structure>
+            <structure name="Quad-1" id="13" length="0" alignment="0">
+                <structref name="Ground" id="15" structure="id:14"/>
+                <structref name="EndGround" id="16" structure="id:9"/>
+                <structref name="EndObjects" id="17" structure="id:9"/>
+            </structure>
+            <structure name="Quad-2" id="19" length="0" alignment="0">
+                <structref name="Ground" id="21" structure="id:20"/>
+                <structref name="EndGround" id="22" structure="id:9"/>
+                <structref name="Object" id="24" structure="id:23"/>
+                <structref name="EndObjects" id="25" structure="id:9"/>
+            </structure>
+            <structure name="Quad-3" id="27">
+                <structref name="Ground" id="28" structure="id:20"/>
+                <structref name="EndGround" id="29" structure="id:9"/>
+                <structref name="Object" id="30" repeatmax="6" structure="id:23"/>
+                <structref name="EndObjects" id="31" structure="id:9"/>
+            </structure>
+            <structure name="Quad-4" id="33">
+                <structref name="Ground" id="34" structure="id:14"/>
+                <structref name="EndGround" id="35" structure="id:9"/>
+                <structref name="EndObjects" id="36" structure="id:9"/>
+            </structure>
+            <structure name="Quad-5" id="38">
+                <structref name="Ground" id="39" structure="id:14"/>
+                <structref name="EndGround" id="40" structure="id:9"/>
+                <structref name="EndObjects" id="41" structure="id:9"/>
+            </structure>
+            <structure name="Quad-6" id="43">
+                <structref name="Ground" id="44" structure="id:14"/>
+                <structref name="EndGround" id="45" structure="id:9"/>
+                <structref name="EndObjects" id="46" structure="id:9"/>
+            </structure>
+            <structure name="Quad-7" id="48">
+                <structref name="Ground" id="49" structure="id:14"/>
+                <structref name="EndGround" id="50" structure="id:9"/>
+                <structref name="EndObjects" id="51" structure="id:9"/>
+            </structure>
+            <structure name="Quad-8" id="53">
+                <structref name="Ground" id="54" structure="id:14"/>
+                <structref name="EndGround" id="55" structure="id:9"/>
+                <structref name="EndObjects" id="56" structure="id:9"/>
+            </structure>
+            <structure name="Quad-9" id="58">
+                <structref name="Ground" id="59" structure="id:14"/>
+                <structref name="EndGround" id="60" structure="id:9"/>
+                <structref name="EndObjects" id="61" structure="id:9"/>
+            </structure>
+            <structure name="Quad-10" id="63">
+                <structref name="Ground" id="64" structure="id:14"/>
+                <structref name="EndGround" id="65" structure="id:9"/>
+                <structref name="EndObjects" id="66" structure="id:9"/>
+            </structure>
+            <structure name="Quad-11" id="68">
+                <structref name="Ground" id="69" structure="id:14"/>
+                <structref name="EndGround" id="70" structure="id:9"/>
+                <structref name="EndObjects" id="71" structure="id:9"/>
+            </structure>
+            <structure name="Quad-12" id="73">
+                <structref name="Ground" id="74" structure="id:14"/>
+                <structref name="EndGround" id="75" structure="id:9"/>
+                <structref name="EndObjects" id="76" structure="id:9"/>
+            </structure>
+            <structure name="Quad-13" id="78">
+                <structref name="Ground" id="79" structure="id:14"/>
+                <structref name="EndGround" id="80" structure="id:9"/>
+                <structref name="EndObjects" id="81" structure="id:9"/>
+            </structure>
+            <structure name="Quad-14" id="83">
+                <structref name="Ground" id="84" structure="id:14"/>
+                <structref name="EndGround" id="85" structure="id:9"/>
+                <structref name="EndObjects" id="86" structure="id:9"/>
+            </structure>
+            <structure name="Quad-15" id="88">
+                <structref name="Ground" id="89" structure="id:14"/>
+                <structref name="EndGround" id="90" structure="id:9"/>
+                <structref name="EndObjects" id="91" structure="id:9"/>
+            </structure>
+            <structure name="Quad-16" id="93">
+                <structref name="Ground" id="94" structure="id:14"/>
+                <structref name="EndGround" id="95" structure="id:9"/>
+                <structref name="EndObjects" id="96" structure="id:9"/>
+            </structure>
+            <structure name="Quad-17" id="98">
+                <structref name="Ground" id="99" structure="id:14"/>
+                <structref name="EndGround" id="100" structure="id:9"/>
+                <structref name="EndObjects" id="101" structure="id:9"/>
+            </structure>
+            <structure name="Quad-18" id="103">
+                <structref name="Ground" id="104" structure="id:14"/>
+                <structref name="EndGround" id="105" structure="id:9"/>
+                <structref name="EndObjects" id="106" structure="id:9"/>
+            </structure>
+            <structure name="Quad-19" id="108">
+                <structref name="Ground" id="109" structure="id:14"/>
+                <structref name="EndGround" id="110" structure="id:9"/>
+                <structref name="EndObjects" id="111" structure="id:9"/>
+            </structure>
+            <structure name="Quad-20" id="113">
+                <structref name="Ground" id="114" structure="id:14"/>
+                <structref name="EndGround" id="115" structure="id:9"/>
+                <structref name="EndObjects" id="116" structure="id:9"/>
+            </structure>
+            <structure name="Quad-21" id="118">
+                <structref name="Ground" id="119" structure="id:14"/>
+                <structref name="EndGround" id="120" structure="id:9"/>
+                <structref name="EndObjects" id="121" structure="id:9"/>
+            </structure>
+            <structure name="Quad-22" id="123">
+                <structref name="Ground" id="124" structure="id:14"/>
+                <structref name="EndGround" id="125" structure="id:9"/>
+                <structref name="Objects" id="126" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="127" structure="id:9"/>
+            </structure>
+            <structure name="Quad-23" id="129">
+                <structref name="Ground" id="131" structure="id:130"/>
+                <structref name="EndGround" id="132" structure="id:9"/>
+                <structref name="EndObjects" id="133" structure="id:9"/>
+            </structure>
+            <structure name="Quad-24" id="135">
+                <structref name="Ground" id="137" structure="id:136"/>
+                <structref name="EndGround" id="138" structure="id:9"/>
+                <structref name="Objects" id="139" repeatmax="15" structure="id:23"/>
+                <structref name="EndObjects" id="140" structure="id:9"/>
+            </structure>
+            <structure name="Quad-25" id="142">
+                <structref name="Ground" id="143" structure="id:20"/>
+                <structref name="EndGround" id="144" structure="id:9"/>
+                <structref name="Objects" id="145" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="146" structure="id:9"/>
+            </structure>
+            <structure name="Quad-26" id="148">
+                <structref name="Ground" id="150" structure="id:149"/>
+                <structref name="EndGround" id="151" structure="id:9"/>
+                <structref name="Objects" id="152" structure="id:23"/>
+                <structref name="EndObjects" id="153" structure="id:9"/>
+            </structure>
+            <structure name="Quad-27" id="155">
+                <structref name="Ground" id="156" structure="id:20"/>
+                <structref name="EndGround" id="157" structure="id:9"/>
+                <structref name="Objects" id="158" repeatmax="10" structure="id:23"/>
+                <structref name="EndObjects" id="159" structure="id:9"/>
+            </structure>
+            <structure name="Quad-28" id="161">
+                <structref name="Ground" id="162" structure="id:20"/>
+                <structref name="EndGround" id="163" structure="id:9"/>
+                <structref name="Objects" id="164" repeatmax="10" structure="id:23"/>
+                <structref name="EndObjects" id="165" structure="id:9"/>
+            </structure>
+            <structure name="Quad-29" id="167">
+                <structref name="Ground" id="168" structure="id:14"/>
+                <structref name="EndGround" id="169" structure="id:9"/>
+                <structref name="EndObjects" id="170" structure="id:9"/>
+            </structure>
+            <structure name="Quad-30" id="172">
+                <structref name="Ground" id="173" structure="id:14"/>
+                <structref name="EndGround" id="174" structure="id:9"/>
+                <structref name="EndObjects" id="175" structure="id:9"/>
+            </structure>
+            <structure name="Quad-31" id="177">
+                <structref name="Ground" id="178" structure="id:14"/>
+                <structref name="EndGround" id="179" structure="id:9"/>
+                <structref name="EndObjects" id="180" structure="id:9"/>
+            </structure>
+            <structure name="Quad-32" id="182">
+                <structref name="Ground" id="183" structure="id:14"/>
+                <structref name="EndGround" id="184" structure="id:9"/>
+                <structref name="EndObjects" id="185" structure="id:9"/>
+            </structure>
+            <structure name="Quad-33" id="187">
+                <structref name="Ground" id="188" structure="id:14"/>
+                <structref name="EndGround" id="189" structure="id:9"/>
+                <structref name="EndObjects" id="190" structure="id:9"/>
+            </structure>
+            <structure name="Quad-34" id="192">
+                <structref name="Ground" id="193" structure="id:14"/>
+                <structref name="EndGround" id="194" structure="id:9"/>
+                <structref name="EndObjects" id="195" structure="id:9"/>
+            </structure>
+            <structure name="Quad-35" id="197">
+                <structref name="Ground" id="198" structure="id:14"/>
+                <structref name="EndGround" id="199" structure="id:9"/>
+                <structref name="EndObjects" id="200" structure="id:9"/>
+            </structure>
+            <structure name="Quad-36" id="202">
+                <structref name="Ground" id="203" structure="id:14"/>
+                <structref name="EndGround" id="204" structure="id:9"/>
+                <structref name="EndObjects" id="205" structure="id:9"/>
+            </structure>
+            <structure name="Quad-37" id="207">
+                <structref name="Ground" id="208" structure="id:149"/>
+                <structref name="EndGround" id="209" structure="id:9"/>
+                <structref name="EndObjects" id="210" structure="id:9"/>
+            </structure>
+            <structure name="Quad-38" id="212">
+                <structref name="Ground" id="213" structure="id:14"/>
+                <structref name="EndGround" id="214" structure="id:9"/>
+                <structref name="Object" id="215" repeatmax="4" structure="id:23"/>
+                <structref name="EndObjects" id="216" structure="id:9"/>
+            </structure>
+            <structure name="Quad-39" id="218">
+                <structref name="Ground" id="219" structure="id:149"/>
+                <structref name="EndGround" id="220" structure="id:9"/>
+                <structref name="EndObjects" id="221" structure="id:9"/>
+            </structure>
+            <structure name="Quad-40" id="223">
+                <structref name="Ground" id="224" structure="id:14"/>
+                <structref name="EndGround" id="225" structure="id:9"/>
+                <structref name="EndObjects" id="226" structure="id:9"/>
+            </structure>
+            <structure name="Quad-45" id="228">
+                <structref name="Ground" id="229" structure="id:14"/>
+                <structref name="EndGround" id="230" structure="id:9"/>
+                <structref name="EndObjects" id="231" structure="id:9"/>
+            </structure>
+            <structure name="Quad-46" id="233">
+                <structref name="Ground" id="234" structure="id:14"/>
+                <structref name="EndGround" id="235" structure="id:9"/>
+                <structref name="EndObjects" id="236" structure="id:9"/>
+            </structure>
+            <structure name="Quad-47" id="238">
+                <structref name="Ground" id="239" structure="id:14"/>
+                <structref name="EndGround" id="240" structure="id:9"/>
+                <structref name="EndObjects" id="241" structure="id:9"/>
+            </structure>
+            <structure name="Quad-48" id="243">
+                <structref name="Ground" id="244" structure="id:14"/>
+                <structref name="EndGround" id="245" structure="id:9"/>
+                <structref name="EndObjects" id="246" structure="id:9"/>
+            </structure>
+            <structure name="Quad-49" id="248">
+                <structref name="Ground" id="249" structure="id:14"/>
+                <structref name="EndGround" id="250" structure="id:9"/>
+                <structref name="EndObjects" id="251" structure="id:9"/>
+            </structure>
+            <structure name="Quad-50" id="253">
+                <structref name="Ground" id="254" structure="id:14"/>
+                <structref name="EndGround" id="255" structure="id:9"/>
+                <structref name="EndObjects" id="256" structure="id:9"/>
+            </structure>
+            <structure name="Quad-51" id="258">
+                <structref name="Ground" id="259" structure="id:14"/>
+                <structref name="EndGround" id="260" structure="id:9"/>
+                <structref name="EndObjects" id="261" structure="id:9"/>
+            </structure>
+            <structure name="Quad-52" id="263">
+                <structref name="Ground" id="264" structure="id:149"/>
+                <structref name="EndGround" id="265" structure="id:9"/>
+                <structref name="EndObjects" id="266" structure="id:9"/>
+            </structure>
+            <structure name="Quad-53" id="268">
+                <structref name="Ground" id="269" structure="id:20"/>
+                <structref name="EndGround" id="270" structure="id:9"/>
+                <structref name="Object" id="271" structure="id:23"/>
+                <structref name="EndObjects" id="272" structure="id:9"/>
+            </structure>
+            <structure name="Quad-54" id="274">
+                <structref name="Ground" id="275" structure="id:149"/>
+                <structref name="EndGround" id="276" structure="id:9"/>
+                <structref name="Object" id="277" structure="id:23"/>
+                <structref name="EndObjects" id="278" structure="id:9"/>
+            </structure>
+            <structure name="Quad-55" id="280">
+                <structref name="Ground" id="281" structure="id:20"/>
+                <structref name="EndGround" id="282" structure="id:9"/>
+                <structref name="Object" id="283" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="284" structure="id:9"/>
+            </structure>
+            <structure name="Quad-56" id="286">
+                <structref name="Ground" id="287" structure="id:20"/>
+                <structref name="EndGround" id="288" structure="id:9"/>
+                <structref name="Object" id="289" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="290" structure="id:9"/>
+            </structure>
+            <structure name="Quad-57" id="292">
+                <structref name="Ground" id="293" structure="id:20"/>
+                <structref name="EndGround" id="294" structure="id:9"/>
+                <structref name="Object" id="295" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="296" structure="id:9"/>
+            </structure>
+            <structure name="Quad-58" id="298">
+                <structref name="Ground" id="299" structure="id:20"/>
+                <structref name="EndGround" id="300" structure="id:9"/>
+                <structref name="Object" id="301" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="302" structure="id:9"/>
+            </structure>
+            <structure name="Quad-59" id="304">
+                <structref name="Ground" id="305" structure="id:20"/>
+                <structref name="EndGround" id="306" structure="id:9"/>
+                <structref name="Object" id="307" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="308" structure="id:9"/>
+            </structure>
+            <structure name="Quad-60" id="310">
+                <structref name="Ground" id="311" structure="id:20"/>
+                <structref name="EndGround" id="312" structure="id:9"/>
+                <structref name="Object" id="313" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="314" structure="id:9"/>
+            </structure>
+            <structure name="Quad-61" id="316">
+                <structref name="Ground" id="317" structure="id:20"/>
+                <structref name="EndGround" id="318" structure="id:9"/>
+                <structref name="Object" id="319" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="320" structure="id:9"/>
+            </structure>
+            <structure name="Quad-62" id="322">
+                <structref name="Ground" id="323" structure="id:20"/>
+                <structref name="EndGround" id="324" structure="id:9"/>
+                <structref name="Object" id="325" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="326" structure="id:9"/>
+            </structure>
+            <structure name="Quad-63" id="328">
+                <structref name="Ground" id="329" structure="id:20"/>
+                <structref name="EndGround" id="330" structure="id:9"/>
+                <structref name="Object" id="331" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="332" structure="id:9"/>
+            </structure>
+            <structure name="Quad-64" id="334">
+                <structref name="Ground" id="335" structure="id:20"/>
+                <structref name="EndGround" id="336" structure="id:9"/>
+                <structref name="Object" id="337" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="338" structure="id:9"/>
+            </structure>
+            <structure name="Quad-65" id="340">
+                <structref name="Ground" id="341" structure="id:20"/>
+                <structref name="EndGround" id="342" structure="id:9"/>
+                <structref name="Object" id="343" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="344" structure="id:9"/>
+            </structure>
+            <structure name="Quad-66" id="346">
+                <structref name="Ground" id="347" structure="id:20"/>
+                <structref name="EndGround" id="348" structure="id:9"/>
+                <structref name="Object" id="349" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="350" structure="id:9"/>
+            </structure>
+            <structure name="Quad-67" id="352">
+                <structref name="Ground" id="353" structure="id:20"/>
+                <structref name="EndGround" id="354" structure="id:9"/>
+                <structref name="Object" id="355" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="356" structure="id:9"/>
+            </structure>
+            <structure name="Quad-68" id="358">
+                <structref name="Ground" id="359" structure="id:20"/>
+                <structref name="EndGround" id="360" structure="id:9"/>
+                <structref name="Object" id="361" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="362" structure="id:9"/>
+            </structure>
+            <structure name="Quad-69" id="364">
+                <structref name="Ground" id="365" structure="id:20"/>
+                <structref name="EndGround" id="366" structure="id:9"/>
+                <structref name="Object" id="367" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="368" structure="id:9"/>
+            </structure>
+            <structure name="Quad-70" id="370">
+                <structref name="Ground" id="371" structure="id:20"/>
+                <structref name="EndGround" id="372" structure="id:9"/>
+                <structref name="Object" id="373" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="374" structure="id:9"/>
+            </structure>
+            <structure name="Quad-71" id="376">
+                <structref name="Ground" id="377" structure="id:20"/>
+                <structref name="EndGround" id="378" structure="id:9"/>
+                <structref name="Object" id="379" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="380" structure="id:9"/>
+            </structure>
+            <structure name="Quad-72" id="382">
+                <structref name="Ground" id="383" structure="id:20"/>
+                <structref name="EndGround" id="384" structure="id:9"/>
+                <structref name="Object" id="385" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="386" structure="id:9"/>
+            </structure>
+            <structure name="Quad-73" id="388">
+                <structref name="Ground" id="389" structure="id:149"/>
+                <structref name="EndGround" id="390" structure="id:9"/>
+                <structref name="Object" id="391" structure="id:23"/>
+                <structref name="EndObjects" id="392" structure="id:9"/>
+            </structure>
+            <structure name="Quad-74" id="394">
+                <structref name="Ground" id="395" structure="id:20"/>
+                <structref name="EndGround" id="396" structure="id:9"/>
+                <structref name="Object" id="397" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="398" structure="id:9"/>
+            </structure>
+            <structure name="Quad-75" id="400">
+                <structref name="Ground" id="401" structure="id:20"/>
+                <structref name="EndGround" id="402" structure="id:9"/>
+                <structref name="Object" id="403" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="404" structure="id:9"/>
+            </structure>
+            <structure name="Quad-76" id="406">
+                <structref name="Ground" id="407" structure="id:20"/>
+                <structref name="EndGround" id="408" structure="id:9"/>
+                <structref name="Object" id="409" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="410" structure="id:9"/>
+            </structure>
+            <structure name="Quad-77" id="412">
+                <structref name="Ground" id="413" structure="id:149"/>
+                <structref name="EndGround" id="414" structure="id:9"/>
+                <structref name="Object" id="415" structure="id:23"/>
+                <structref name="EndObjects" id="416" structure="id:9"/>
+            </structure>
+            <structure name="Quad-78" id="418">
+                <structref name="Ground" id="419" structure="id:20"/>
+                <structref name="EndGround" id="420" structure="id:9"/>
+                <structref name="Object" id="421" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="422" structure="id:9"/>
+            </structure>
+            <structure name="Quad-79" id="424">
+                <structref name="Ground" id="425" structure="id:136"/>
+                <structref name="EndGround" id="426" structure="id:9"/>
+                <structref name="Object" id="427" structure="id:23"/>
+                <structref name="EndObjects" id="428" structure="id:9"/>
+            </structure>
+            <structure name="Quad-80" id="430">
+                <structref name="Ground" id="431" structure="id:149"/>
+                <structref name="EndGround" id="432" structure="id:9"/>
+                <structref name="Object" id="433" structure="id:23"/>
+                <structref name="EndObjects" id="434" structure="id:9"/>
+            </structure>
+            <structure name="Quad-81" id="436">
+                <structref name="Ground" id="437" structure="id:136"/>
+                <structref name="EndGround" id="438" structure="id:9"/>
+                <structref name="Object" id="439" structure="id:23"/>
+                <structref name="EndObjects" id="440" structure="id:9"/>
+            </structure>
+            <structure name="Quad-82" id="442">
+                <structref name="Ground" id="443" structure="id:136"/>
+                <structref name="EndGround" id="444" structure="id:9"/>
+                <structref name="Object" id="445" structure="id:23"/>
+                <structref name="EndObjects" id="446" structure="id:9"/>
+            </structure>
+            <structure name="Quad-83" id="448">
+                <structref name="Ground" id="449" structure="id:20"/>
+                <structref name="EndGround" id="450" structure="id:9"/>
+                <structref name="Object" id="451" structure="id:23"/>
+                <structref name="EndObjects" id="452" structure="id:9"/>
+            </structure>
+            <structure name="Quad-84" id="454">
+                <structref name="Ground" id="455" structure="id:20"/>
+                <structref name="EndGround" id="456" structure="id:9"/>
+                <structref name="Object" id="457" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="458" structure="id:9"/>
+            </structure>
+            <structure name="Quad-85" id="460">
+                <structref name="Ground" id="461" structure="id:20"/>
+                <structref name="EndGround" id="462" structure="id:9"/>
+                <structref name="Object" id="463" structure="id:23"/>
+                <structref name="EndObjects" id="464" structure="id:9"/>
+            </structure>
+            <structure name="Quad-86" id="466">
+                <structref name="Ground" id="467" structure="id:20"/>
+                <structref name="EndGround" id="468" structure="id:9"/>
+                <structref name="Object" id="469" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="470" structure="id:9"/>
+            </structure>
+            <structure name="Quad-87" id="472">
+                <structref name="Ground" id="473" structure="id:20"/>
+                <structref name="EndGround" id="474" structure="id:9"/>
+                <structref name="Object" id="475" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="476" structure="id:9"/>
+            </structure>
+            <structure name="Quad-88" id="478">
+                <structref name="Ground" id="479" structure="id:20"/>
+                <structref name="EndGround" id="480" structure="id:9"/>
+                <structref name="Object" id="481" structure="id:23"/>
+                <structref name="EndObjects" id="482" structure="id:9"/>
+            </structure>
+            <structure name="Quad-89" id="484">
+                <structref name="Ground" id="485" structure="id:130"/>
+                <structref name="EndGround" id="486" structure="id:9"/>
+                <structref name="Object" id="487" structure="id:23"/>
+                <structref name="EndObjects" id="488" structure="id:9"/>
+            </structure>
+            <structure name="Quad-90" id="490">
+                <structref name="Ground" id="491" structure="id:14"/>
+                <structref name="EndGround" id="492" structure="id:9"/>
+                <structref name="Object" id="493" structure="id:23"/>
+                <structref name="EndObjects" id="494" structure="id:9"/>
+            </structure>
+            <structure name="Quad-91" id="496">
+                <structref name="Ground" id="497" structure="id:136"/>
+                <structref name="EndGround" id="498" structure="id:9"/>
+                <structref name="Object" id="499" structure="id:23"/>
+                <structref name="EndObjects" id="500" structure="id:9"/>
+            </structure>
+            <structure name="Quad-92" id="502">
+                <structref name="Ground" id="503" structure="id:20"/>
+                <structref name="EndGround" id="504" structure="id:9"/>
+                <structref name="Object" id="505" structure="id:23"/>
+                <structref name="EndObjects" id="506" structure="id:9"/>
+            </structure>
+            <structure name="Quad-93" id="508">
+                <structref name="Ground" id="509" structure="id:20"/>
+                <structref name="EndGround" id="510" structure="id:9"/>
+                <structref name="Object" id="511" structure="id:23"/>
+                <structref name="EndObjects" id="512" structure="id:9"/>
+            </structure>
+            <structure name="Quad-94" id="514">
+                <structref name="Ground" id="515" structure="id:565"/>
+                <structref name="EndGround" id="516" structure="id:9"/>
+                <structref name="Object" id="517" repeatmax="6" structure="id:23"/>
+                <structref name="EndObjects" id="518" structure="id:9"/>
+            </structure>
+            <structure name="Quad-95" id="520">
+                <structref name="Ground" id="571" structure="id:20"/>
+                <structref name="EndGround" id="570" structure="id:9"/>
+                <structref name="Object" id="569" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="568" structure="id:9"/>
+            </structure>
+            <structure name="Quad-96" id="522">
+                <structref name="Ground" id="575" structure="id:149"/>
+                <structref name="EndGround" id="574" structure="id:9"/>
+                <structref name="Object" id="573" repeatmax="5" structure="id:23"/>
+                <structref name="EndObjects" id="572" structure="id:9"/>
+            </structure>
+            <structure name="Quad-97" id="524">
+                <structref name="Ground" id="579" structure="id:20"/>
+                <structref name="EndGround" id="578" structure="id:9"/>
+                <structref name="Object" id="577" structure="id:23"/>
+                <structref name="EndObjects" id="576" structure="id:9"/>
+            </structure>
+            <structure name="Quad-98" id="526">
+                <structref name="Ground" id="583" structure="id:20"/>
+                <structref name="EndGround" id="582" structure="id:9"/>
+                <structref name="Object" id="581" repeatmax="4" structure="id:23"/>
+                <structref name="EndObjects" id="580" structure="id:9"/>
+            </structure>
+            <structure name="Quad-99-Start" id="528">
+                <structref name="Ground" id="587" structure="id:20"/>
+                <structref name="EndGround" id="586" structure="id:9"/>
+                <structref name="Object" id="585" structure="id:23"/>
+                <structref name="EndObjects" id="584" structure="id:9"/>
+            </structure>
+            <structure name="Quad-100" id="530">
+                <structref name="Ground" id="591" structure="id:20"/>
+                <structref name="EndGround" id="590" structure="id:9"/>
+                <structref name="Object" id="589" structure="id:23"/>
+                <structref name="EndObjects" id="588" structure="id:9"/>
+            </structure>
+            <structure name="Quad-101" id="592">
+                <structref name="Ground" id="615" structure="id:20"/>
+                <structref name="EndGround" id="614" structure="id:9"/>
+                <structref name="Object" id="613" structure="id:23"/>
+                <structref name="EndObjects" id="612" structure="id:9"/>
+            </structure>
+            <structure name="Quad-102" id="594">
+                <structref name="Ground" id="619" structure="id:20"/>
+                <structref name="EndGround" id="618" structure="id:9"/>
+                <structref name="Object" id="617" structure="id:23"/>
+                <structref name="EndObjects" id="616" structure="id:9"/>
+            </structure>
+            <structure name="Quad-103" id="596">
+                <structref name="Ground" id="623" structure="id:20"/>
+                <structref name="EndGround" id="622" structure="id:9"/>
+                <structref name="Object" id="621" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="620" structure="id:9"/>
+            </structure>
+            <structure name="Quad-104" id="598">
+                <structref name="Ground" id="627" structure="id:149"/>
+                <structref name="EndGround" id="626" structure="id:9"/>
+                <structref name="Object" id="625" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="624" structure="id:9"/>
+            </structure>
+            <structure name="Quad-105" id="600">
+                <structref name="Ground" id="631" structure="id:20"/>
+                <structref name="EndGround" id="630" structure="id:9"/>
+                <structref name="Object" id="629" structure="id:23"/>
+                <structref name="EndObjects" id="628" structure="id:9"/>
+            </structure>
+            <structure name="Quad-106" id="602">
+                <structref name="Ground" id="635" structure="id:20"/>
+                <structref name="EndGround" id="634" structure="id:9"/>
+                <structref name="Object" id="633" repeatmax="2" structure="id:23"/>
+                <structref name="EndObjects" id="632" structure="id:9"/>
+            </structure>
+            <structure name="Quad-107" id="604">
+                <structref name="Ground" id="639" structure="id:20"/>
+                <structref name="EndGround" id="638" structure="id:9"/>
+                <structref name="Object" id="637" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="636" structure="id:9"/>
+            </structure>
+            <structure name="Quad-108" id="606">
+                <structref name="Ground" id="643" structure="id:20"/>
+                <structref name="EndGround" id="642" structure="id:9"/>
+                <structref name="Object" id="641" structure="id:23"/>
+                <structref name="EndObjects" id="640" structure="id:9"/>
+            </structure>
+            <structure name="Quad-109" id="608">
+                <structref name="Ground" id="647" structure="id:20"/>
+                <structref name="EndGround" id="646" structure="id:9"/>
+                <structref name="Object" id="645" repeatmax="3" structure="id:23"/>
+                <structref name="EndObjects" id="644" structure="id:9"/>
+            </structure>
+            <structure name="Quad-110" id="610">
+                <structref name="Ground" id="651" structure="id:20"/>
+                <structref name="EndGround" id="650" structure="id:9"/>
+                <structref name="Object" id="649" structure="id:23"/>
+                <structref name="EndObjects" id="648" structure="id:9"/>
             </structure>
         </structure>
-        <structure name="Streets" id="47" length="38" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <binary name="NewRecordDelimeter" id="154" fillcolor="DBC4AF" length="2"/>
-            <number name="Warp" id="156" fillcolor="FFBE96" type="integer" length="2"/>
-            <structure name="Road" id="180" repeatmax="4">
-                <number name="RoadType" id="161" fillcolor="C2F3ED" type="integer" length="2"/>
-                <binary name="Flags" id="158" fillcolor="FFE4C9" length="6"/>
+        <structure name="Ground" id="533" length="0" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <binary name="Unknown" id="534" fillcolor="F49453" length="2"/>
+            <number name="Warp" id="535" fillcolor="FFBE96" type="integer" length="2"/>
+            <structure name="Road" id="536" length="8" repeatmin="0" repeatmax="6">
+                <number name="RoadType" id="537" fillcolor="9FE6DF" type="integer" length="2"/>
+                <number name="FlagA" id="538" fillcolor="DDFFF2" type="integer" length="1"/>
+                <number name="FlagB" id="539" fillcolor="DDFFF2" type="integer" length="1"/>
+                <number name="FlagC" id="540" fillcolor="DDFFF2" type="integer" length="1"/>
+                <number name="FlagD" id="541" fillcolor="DDFFF2" type="integer" length="1"/>
+                <number name="FlagE" id="542" fillcolor="DDFFF2" type="integer" length="1"/>
+                <number name="FlagF" id="543" fillcolor="DDFFF2" type="integer" length="1"/>
             </structure>
-            <binary name="Separator" id="43" fillcolor="EAFF00" length="2"/>
         </structure>
-        <structure name="Model" id="6" length="8" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <number name="ModelID" id="7" fillcolor="FF89FE" type="integer" length="2">
+        <structure name="Object" id="23" length="8" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="ID" id="546" fillcolor="FF89FE" type="integer" length="2">
                 <fixedvalues>
                     <fixedvalue name="Warehouse" value="76"/>
                 </fixedvalues>
             </number>
-            <number name="PosX" id="11" fillcolor="FF6857" type="integer" length="2"/>
-            <number name="PosY" id="13" fillcolor="00F53C" type="integer" length="2"/>
-            <number name="PosZ" id="9" fillcolor="00B2FF" type="integer" length="2"/>
+            <number name="PosX" id="547" fillcolor="FF6857" type="integer" length="2"/>
+            <number name="PosY" id="548" fillcolor="00F53C" type="integer" length="2"/>
+            <number name="PosZ" id="549" fillcolor="00B2FF" type="integer" length="2"/>
         </structure>
-        <structure name="Modelx1" id="100" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <structref name="Model" id="103" structure="id:6"/>
-            <binary name="Separator" id="104" fillcolor="EAFF00" length="2"/>
+        <structure name="EndElement" id="9" length="2" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <binary name="Pad" id="551" fillcolor="FDE200" length="2"/>
+        </structure>
+        <structure name="Ground-0Roads" id="7" length="4" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Ground" id="553" structure="id:533"/>
+        </structure>
+        <structure name="Ground-1Road" id="14" length="12" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Ground" id="555" structure="id:533"/>
+        </structure>
+        <structure name="Ground-2Roads" id="130" length="20" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Ground" id="557" structure="id:533"/>
+        </structure>
+        <structure name="Ground-3Roads" id="149" length="28" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Ground" id="559" structure="id:533"/>
+        </structure>
+        <structure name="Ground-4Roads" id="20" length="36" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Ground" id="561" structure="id:533"/>
+        </structure>
+        <structure name="Ground-5Roads" id="136" length="44" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Ground" id="563" structure="id:533"/>
+        </structure>
+        <structure name="Ground-6Roads" id="565" length="52" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="Ground" id="566" structure="id:533"/>
         </structure>
     </grammar>
 </ufwb>
