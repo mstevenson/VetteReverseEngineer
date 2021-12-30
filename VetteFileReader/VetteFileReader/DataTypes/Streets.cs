@@ -6,22 +6,17 @@ namespace VetteFileReader
 {
 	public struct Streets : IParsable
 	{
-//		public List<string> streets = new List<string> ();
+		public List<string> streetNames;
 
-		const long dataStart = 0x01;
-		const int nameLength = 11;
-
-		public void Parse (BinaryReaderBigEndian stream)
+		public void Parse (BinaryReaderBigEndian reader)
 		{
-//			long position = dataStart;
-//			while (position < stream.Length) {
-//				Char[] chars = new Char[nameLength];
-//				for (int i = 0; i < nameLength; i++) {
-//					chars[i] = accessor.ReadChar (position);
-//				}
-//				streets.Add (new string (chars));
-//				position += nameLength + 1;
-//			}
+			streetNames = new List<string> ();
+
+			while (reader.BaseStream.Position < reader.BaseStream.Length - 1)
+			{
+				var name = reader.ReadString();
+				streetNames.Add(name);
+			}
 		}
 	}
 }

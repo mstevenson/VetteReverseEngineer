@@ -9,7 +9,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>VetteFileReader</RootNamespace>
     <AssemblyName>VetteFileReader</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -35,6 +35,10 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataTypes\MainMap.cs" />
+    <Compile Include="DataTypes\Pattern.cs" />
+    <Compile Include="DataTypes\QuadDescriptorData.cs" />
+    <Compile Include="DataTypes\Vector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Code\ByteArrayExtension.cs" />
     <Compile Include="Code\FileParser.cs" />
