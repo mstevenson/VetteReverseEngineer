@@ -1,31 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ufwb version="1.17">
-    <grammar name="MAPS Grammar" start="id:9" author="Michael Stevenson">
+    <grammar name="MAPS Grammar" start="id:763" author="Michael Stevenson">
         <description>Grammar for my file format</description>
-        <structure name="MAPS Resource" id="9" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <number name="DataLength" id="10" fillcolor="3FD168" type="integer" length="2" valueexpression="Count1 * (2^1)">
+        <structure name="MAPS Resource" id="763" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="DataLength" id="764" fillcolor="3FD168" type="integer" length="2" display="hex" valueexpression="DataLength * 2">
                 <description>Specifies map data length in bytes, bit shifted left once</description>
             </number>
-            <structure name="Block" id="11" length="208" repeatmax="-1">
-                <structure name="Header" id="43" length="4" alignment="0" repeatmin="4" repeatmax="4">
-                    <binary name="PaddingStart" id="58" fillcolor="9DF2FE" length="1"/>
-                    <number name="A" id="45" fillcolor="00CDFD" type="integer" length="1"/>
-                    <number name="B" id="46" fillcolor="00CDFE" type="integer" length="1"/>
-                    <binary name="PaddingEnd" id="44" fillcolor="9DF2FE" length="1"/>
+            <structure name="Chunk" id="765" length="0" repeatmax="-1">
+                <structure name="Header" id="766" length="4" alignment="0" repeatmin="4" repeatmax="4">
+                    <binary name="PaddingStart" id="767" fillcolor="9DF2FE" length="1"/>
+                    <number name="A" id="768" fillcolor="00CDFD" type="integer" length="1"/>
+                    <number name="B" id="769" fillcolor="00CDFE" type="integer" length="1"/>
+                    <binary name="PaddingEnd" id="770" fillcolor="9DF2FE" length="1"/>
                 </structure>
-                <structure name="Element" id="36" length="4" repeatmin="48" repeatmax="48">
-                    <binary name="PaddingStart" id="57" fillcolor="FFEFBB" length="1"/>
-                    <number name="GridType" id="33" fillcolor="FFD300" type="integer" length="1">
-                        <description>Specifies one of 255 different grid space types at this coordinate, such as Warehouse or Ferry Building.</description>
+                <structure name="Element" id="772" length="4" repeatmin="48" repeatmax="48">
+                    <number name="QuadID" id="774" fillcolor="FF8CFF" type="integer" length="2">
+                        <description>Specifies an ID that corresponds to a Quad in the Quad Descriptors resource. A Quad lays out one city block.</description>
                         <fixedvalues>
                             <fixedvalue name="Water" value="1"/>
                             <fixedvalue name="Transamerica" value="2"/>
                             <fixedvalue name="GasStation" value="3"/>
-                            <fixedvalue name="BlueHouses" value="165"/>
+                            <fixedvalue name="BroadwayTunnel" value="19"/>
                         </fixedvalues>
                     </number>
-                    <number name="unknown" id="38" fillcolor="FFD300" type="integer" length="1"/>
-                    <binary name="PaddingEnd" id="51" fillcolor="FFEFBB" length="1"/>
+                    <number name="unknown" id="775" fillcolor="FFD300" type="integer" length="1"/>
+                    <number name="unknown2" id="776" fillcolor="FFD300" type="integer" length="1"/>
                 </structure>
             </structure>
         </structure>
