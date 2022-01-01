@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace VetteFileReader
@@ -8,6 +9,16 @@ namespace VetteFileReader
     public class ResourceFork
     {
         public List<Resource> resources = new List<Resource>();
+        
+        public IEnumerable<Resource> GetResourcesOfType(string typeName)
+        {
+            return resources.Where(r => r.typeString == typeName);
+        }
+        
+        public Resource GetResourceWithName(string typeName, string resourceName)
+        {
+            return GetResourcesOfType(typeName).FirstOrDefault(r => r.name == resourceName);
+        }
     }
         
     public class Resource
@@ -42,8 +53,6 @@ namespace VetteFileReader
         /// </summary>
         public static ResourceFork LoadResourceFork(string filePath)
         {
-            // Nuget: Mono.Posix.NETStandard
-            // com.apple.ResourceFork
             Mono.Unix.Native.Syscall.getxattr(filePath, "com.apple.ResourceFork", out var data);
             using (var stream = new MemoryStream(data))
             {
@@ -52,6 +61,17 @@ namespace VetteFileReader
                     return Parse(reader);
                 }
             }
+        }
+        
+        public static bool LogOutput { get; set; }
+        
+        private static void Log(string message)
+        {
+            if (!LogOutput)
+            {
+                return;
+            }
+            Console.WriteLine(message);
         }
         
         public static ResourceFork Parse(BinaryReaderBigEndian reader)
@@ -74,16 +94,16 @@ namespace VetteFileReader
                 reader.ReadBytes(128); // 128 bytes: Application-specific data. In practice, this is usually all null bytes.
             }
             
-            Console.WriteLine($"data offset: {dataOffset:X4}");
-            Console.WriteLine($"map offset: {mapOffset:X4}");
-            Console.WriteLine($"data length: {dataLength:X4}");
-            Console.WriteLine($"map length: {mapLength:X4}");
+            Log($"data offset: {dataOffset:X4}");
+            Log($"map offset: {mapOffset:X4}");
+            Log($"data length: {dataLength:X4}");
+            Log($"map length: {mapLength:X4}");
             
             // Resource map
             
             Seek(mapOffset);
             
-            Console.WriteLine($"\n+ Seek mapOffset: {mapOffset:X4}\n");
+            Log($"\n+ Seek mapOffset: {mapOffset:X4}\n");
             
             // Unused
             {
@@ -95,21 +115,21 @@ namespace VetteFileReader
             var typeListOffset = reader.ReadUInt16() + mapOffset; // 2 bytes: Offset from beginning of resource map to type list.
             var nameListOffset = reader.ReadUInt16() + mapOffset; // 2 bytes: Offset from beginning of resource map to resource name list.
             
-            Console.WriteLine($"typeListOffset: {typeListOffset:X4}");
-            Console.WriteLine($"nameListOffset: {nameListOffset:X4}");
+            Log($"typeListOffset: {typeListOffset:X4}");
+            Log($"nameListOffset: {nameListOffset:X4}");
             
             // Type List
             
             Seek(typeListOffset);
             
-            Console.WriteLine($"\n+ Seek typeListOffset: {typeListOffset:X4}\n");
+            Log($"\n+ Seek typeListOffset: {typeListOffset:X4}\n");
             
             var typeListLength = reader.ReadUInt16() + 1; // Number of resource types in the map minus 1.
             var typeList = new ResourceType[typeListLength];
             
-            Console.WriteLine($"typeListLength: {typeListLength:X4}");
+            Log($"typeListLength: {typeListLength:X4}");
             
-            Console.WriteLine("\n");
+            Log("\n");
             
             for (int i = 0; i < typeListLength; i++)
             {
@@ -119,20 +139,22 @@ namespace VetteFileReader
                     resourceCount = reader.ReadUInt16() + 1U, // Number of resources of this type in the map minus 1.
                     referenceListOffset = reader.ReadUInt16() + typeListOffset // Offset from beginning of type list to reference list for resources of this type.
                 };
+
+                typeList[i].resourceTypeString = Encoding.GetEncoding(10000).GetString(typeList[i].resourceType);
                 
-                Console.WriteLine($"{Encoding.GetEncoding(10000).GetString(typeList[i].resourceType)}");
-                Console.WriteLine($"  resourceCount: {typeList[i].resourceCount}");
-                Console.WriteLine($"  referenceListOffset: {typeList[i].referenceListOffset:X4}");
+                Log($"{typeList[i].resourceTypeString}");
+                Log($"  resourceCount: {typeList[i].resourceCount}");
+                Log($"  referenceListOffset: {typeList[i].referenceListOffset:X4}");
             }
             
-            Console.WriteLine("\n");
+            Log("\n");
             
             foreach (var type in typeList)
             {
                 Seek(type.referenceListOffset);
                 
-                Console.WriteLine($"\n+ Seek referenceListOffset: {type.referenceListOffset:X4}\n");
-                Console.WriteLine($"{Encoding.GetEncoding(10000).GetString(type.resourceType)}");
+                Log($"\n+ Seek referenceListOffset: {type.referenceListOffset:X4}\n");
+                Log(type.resourceTypeString);
                 
                 var resourceReferences = new ResourceReference[type.resourceCount];
                 
@@ -140,32 +162,22 @@ namespace VetteFileReader
                 {
                     resourceReferences[i] = new ResourceReference();
                     
-                    var resource = new Resource();
-                    resource.type = type.resourceType;
-                    resource.typeString = Encoding.GetEncoding(10000).GetString(resource.type);
-                    
-                    // Resource header
-                    
-                    resource.id = reader.ReadInt16(); // 2 bytes: Resource ID. Signed.
+                    resourceReferences[i].id = reader.ReadInt16(); // 2 bytes: Resource ID. Signed.
                     var nameOffset = reader.ReadUInt16(); // 2 bytes: Offset from beginning of resource name list to length of resource name, or -1 (0xffff) if none.
                     resourceReferences[i].nameOffset = nameOffset != 0xFFFF ? nameOffset + nameListOffset : nameOffset;
                     var attributesAndDataOffset = reader.ReadBytes(4);
-                    resource.attributes = (ResourceAttrs) attributesAndDataOffset[0]; // 1 byte: Resource attributes. Combination of ResourceAttrs flags, see below. (Note: packed into 4 bytes together with the next 3 bytes.)
+                    resourceReferences[i].attributes = (ResourceAttrs) attributesAndDataOffset[0]; // 1 byte: Resource attributes. Combination of ResourceAttrs flags, see below. (Note: packed into 4 bytes together with the next 3 bytes.)
                     attributesAndDataOffset[0] = 0; // mask out first byte
                     Array.Reverse(attributesAndDataOffset); // swap to big endian
                     resourceReferences[i].dataBlockOffset = BitConverter.ToUInt32(attributesAndDataOffset, 0) + dataOffset; // 3 bytes: Offset from beginning of resource data to length of data for this resource. (Note: packed into 4 bytes together with the previous 1 byte.)
                     
-                    Console.WriteLine($"    resourceID: {resource.id}");
-                    Console.WriteLine($"    nameOffset: {resourceReferences[i].nameOffset:X4}");
-                    Console.WriteLine($"    attributes: {resource.attributes}");
-                    Console.WriteLine($"    dataBlockOffset: {resourceReferences[i].dataBlockOffset:X4}\n");
+                    Log($"    resourceID: {resourceReferences[i].id}");
+                    Log($"    nameOffset: {resourceReferences[i].nameOffset:X4}");
+                    Log($"    attributes: {resourceReferences[i].attributes}");
+                    Log($"    dataBlockOffset: {resourceReferences[i].dataBlockOffset:X4}\n");
                     
                     // Unused
                     reader.ReadUInt32(); // 4 bytes: Reserved for handle to resource (in memory). Should be 0 in file.
-
-                    // Add resource to list
-                    
-                    resources.Add(resource);
                 }
                 
                 // Add resource name and data
@@ -178,37 +190,55 @@ namespace VetteFileReader
                     {
                         Seek(resourceReferences[i].nameOffset);
                         var resourceNameLength = reader.ReadByte(); // 1 byte: Length of following resource name.
-                        resources[i].name = Encoding.GetEncoding(10000).GetString(reader.ReadBytes(resourceNameLength));
+                        resourceReferences[i].name = Encoding.GetEncoding(10000).GetString(reader.ReadBytes(resourceNameLength));
                         
-                        // Console.WriteLine($    "+ Seek nameOffset: {resourceReferences[i].nameOffset:X4}");
-                        Console.WriteLine($"  name: {resources[i].name}");
+                        Log($"  name: {resourceReferences[i].name}");
                     }
                     
                     // Resource data
                     
                     Seek(resourceReferences[i].dataBlockOffset);
                     var resourceBlockDataLength = reader.ReadUInt32(); // 4 bytes: Length of following resource data.
-                    resources[i].data = reader.ReadBytes((int)resourceBlockDataLength);
+                    resourceReferences[i].data = reader.ReadBytes((int)resourceBlockDataLength);
                     
-                    Console.WriteLine($"    + Seek dataBlockOffset: {resourceReferences[i].dataBlockOffset:X4}");
-                    Console.WriteLine($"    dataBlockLength: {resourceBlockDataLength:X4}\n");
+                    Log($"    + Seek dataBlockOffset: {resourceReferences[i].dataBlockOffset:X4}");
+                    Log($"    dataBlockLength: {resourceBlockDataLength:X4}\n");
+                }
+                
+                foreach (var resourceRef in resourceReferences)
+                {
+                    var resource = new Resource
+                    {
+                        id = resourceRef.id,
+                        type = type.resourceType,
+                        typeString = type.resourceTypeString,
+                        attributes = resourceRef.attributes,
+                        name = resourceRef.name,
+                        data = resourceRef.data
+                    };
+                    resources.Add(resource);
                 }
             }
             
             return result;
         }
-        
+
         private class ResourceType
         {
             public byte[] resourceType; // Usually a 4-character ASCII mnemonic, but may be any 4 bytes.
+            public string resourceTypeString;
             public uint resourceCount;
             public uint referenceListOffset;
         }
 
         private class ResourceReference
         {
+            public short id;
             public uint nameOffset;
+            public ResourceAttrs attributes;
             public uint dataBlockOffset;
+            public byte[] data;
+            public string name;
         }
     }
 }

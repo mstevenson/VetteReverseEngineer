@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using VetteFileReader;
 
 class App
@@ -12,16 +11,19 @@ class App
             return;
         }
 
-        if (!File.Exists(args[0]))
+        string filePath = args[0];
+        
+        if (!File.Exists(filePath))
         {
-            Console.WriteLine("File doesn't exist: " + args[0]);
+            Console.WriteLine($"File doesn't exist: {filePath}");
             return;
         }
         
-        var resourceFork = ResourceForkParser.LoadResourceFork(args[0]);
-
-        // resourceFork.resources.Select(r => r.typeString == "STRT");
-
-        // Console.WriteLine(rf.dataOffset);
+        var resourceFork = ResourceForkParser.LoadResourceFork(filePath);
+        
+        foreach (var resource in resourceFork.GetResourcesOfType("MAPS"))
+        {
+            Console.WriteLine(resource.name);
+        }
     }
 }
