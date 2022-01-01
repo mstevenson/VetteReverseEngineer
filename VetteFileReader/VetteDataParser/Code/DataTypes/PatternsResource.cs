@@ -26,7 +26,7 @@ namespace VetteFileReader
         
         public static Pattern Parse(BinaryReaderBigEndian reader)
         {
-            var p = new Pattern
+            var pattern = new Pattern
             {
                 pixelColorIndexes = new int[PixelCount]
             };
@@ -39,12 +39,12 @@ namespace VetteFileReader
                 {
                     // Unpack into two half bytes representing one of 16 colors
                     var b = reader.ReadByte();
-                    p.pixelColorIndexes[i] = b >> 1;
-                    p.pixelColorIndexes[i + 1] = b & 0xF;
+                    pattern.pixelColorIndexes[i] = b >> 1;
+                    pattern.pixelColorIndexes[i + 1] = b & 0xF;
                 }
             }
 
-            return p;
+            return pattern;
         }
     }
 }

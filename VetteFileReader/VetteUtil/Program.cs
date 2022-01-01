@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using MacResourceFork;
+using VetteFileReader;
 
 class App
 {
@@ -10,7 +11,7 @@ class App
         {
             return;
         }
-
+        
         string filePath = args[0];
         
         if (!File.Exists(filePath))
@@ -19,11 +20,14 @@ class App
             return;
         }
         
-        var resourceFork = ResourceForkParser.LoadResourceFork(filePath);
+        // ResourceForkParser.LogOutput = true;
         
-        foreach (var resource in resourceFork.GetResourcesOfType("MAPS"))
-        {
-            Console.WriteLine(resource.name);
-        }
+        var vetteData = VetteData.Parse(filePath);
+        
+        // Console.WriteLine($"main map chunks: {vetteData.mainMap.chunks}");
+        // Console.WriteLine($"quads: {vetteData.quadDescriptors.Count}");
+        // Console.WriteLine($"objs: {vetteData.objs.Count}");
+        // Console.WriteLine($"patterns: {vetteData.patterns.Count}");
+        // Console.WriteLine($"streets: {vetteData.streetNames.Count}");
     }
 }

@@ -6,7 +6,7 @@ namespace VetteFileReader
 {
     public class QuadDescriptorDataResource : IResource
     {
-        public int fileLength;
+        public uint fileLength;
         public List<QuadDescriptor> quads;
         
         public void Parse(BinaryReaderBigEndian reader)
@@ -14,17 +14,25 @@ namespace VetteFileReader
             fileLength = reader.ReadUInt16();
             quads = new List<QuadDescriptor>();
 
-            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            while (reader.BaseStream.Position < reader.BaseStream.Length)
             {
-                quads.Add(QuadDescriptor.Parse(reader));
+                try
+                {
+                    var quad = QuadDescriptor.Parse(reader);
+                    quads.Add(quad);
+                }
+                catch (EndOfStreamException e)
+                {
+                    // nothing
+                }
             }
         }
     }
     
     public struct QuadDescriptor
     {
-        public int unknown;
-        public int collisionModel;
+        public uint unknown;
+        public uint collisionModel;
 
         public List<Road> roads;
         public List<ObjInstance> objects;
@@ -33,38 +41,47 @@ namespace VetteFileReader
         {
             Water = 0x3F
         }
-        
+
+
         public static QuadDescriptor Parse(BinaryReaderBigEndian reader)
         {
-            var q = new QuadDescriptor
+            var quad = new QuadDescriptor
             {
                 unknown = reader.ReadUInt16(),
                 collisionModel = reader.ReadUInt16(),
                 roads = new List<Road>(),
                 objects = new List<ObjInstance>()
             };
+
+            // Console.WriteLine($"QUAD ({reader.BaseStream.Position:X4}):  {quad.collisionModel}");
+            // Console.WriteLine("  road search");
             
             while (!DetectDelimiter(reader))
             {
                 var road = Road.Parse(reader);
-                q.roads.Add(road);
+                quad.roads.Add(road);
+                // Console.WriteLine($"    read road: {road.roadType}");
             }
+            
+            // Console.WriteLine("  obj search");
             
             while (!DetectDelimiter(reader))
             {
                 var obj = ObjInstance.Parse(reader);
-                q.objects.Add(obj);
+                quad.objects.Add(obj);
+                // Console.WriteLine("    read obj: " + obj.objectId);
             }
 
-            return q;
+            return quad;
         }
         
         private static bool DetectDelimiter(BinaryReader reader)
         {
+            var originalPosition = reader.BaseStream.Position;
             var foundDelimiter = reader.ReadUInt16() == 0xFFFF;
             if (!foundDelimiter)
             {
-                reader.BaseStream.Seek(-4, SeekOrigin.Current);
+                reader.BaseStream.Position = originalPosition;
             }
             return foundDelimiter;
         }

@@ -7,10 +7,10 @@ namespace VetteFileReader
     public class VetteData
     {
         public MainMapResource mainMap;
-        public List<QuadDescriptorDataResource> quadDescriptors;
-        public List<ObjResource> objs;
-        public List<string> streetNames;
-        public List<PatternsResource> patterns;
+        public List<QuadDescriptorDataResource> quadDescriptors = new List<QuadDescriptorDataResource>();
+        public List<ObjResource> objs = new List<ObjResource>();
+        public List<string> streetNames = new List<string>();
+        public List<PatternsResource> patterns = new List<PatternsResource>();
 
         public static VetteData Parse(string filePath)
         {
@@ -26,13 +26,13 @@ namespace VetteFileReader
                 var quadParsed = VetteResourceParser.Parse<QuadDescriptorDataResource>(quadResource);
                 data.quadDescriptors.Add(quadParsed);
             }
-
+            
             foreach (var objResource in resourceFork.GetResourcesOfType("OBJS"))
             {
                 var objParsed = VetteResourceParser.Parse<ObjResource>(objResource);
                 data.objs.Add(objParsed);
             }
-
+            
             var streetsResource = resourceFork.GetResourcesOfType("STRT").FirstOrDefault();
             var streetsParsed = VetteResourceParser.Parse<StreetNamesResource>(streetsResource);
             foreach (var streetName in streetsParsed.names)
