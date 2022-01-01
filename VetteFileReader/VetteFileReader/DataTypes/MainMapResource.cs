@@ -3,7 +3,7 @@ using System.IO;
 
 namespace VetteFileReader
 {
-    public struct MainMap : IParsable
+    public class MainMapResource : IResource
     {
         public int fileLength;
         public List<MapChunk> chunks;
@@ -11,19 +11,17 @@ namespace VetteFileReader
         public void Parse(BinaryReaderBigEndian reader)
         {
             fileLength = reader.ReadUInt16();
-            
             chunks = new List<MapChunk>();
-            
-            while (reader.BaseStream.Position < reader.BaseStream.Length - 1)
+
+            while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
-                var chunk = new MapChunk();
-                chunk.Parse(reader);
+                var chunk = MapChunk.Parse(reader);
                 chunks.Add(chunk);
             }
         }
     }
-
-    public struct MapChunk : IParsable
+    
+    public struct MapChunk
     {
         public int headerA1;
         public int headerA2;
@@ -36,44 +34,50 @@ namespace VetteFileReader
         
         public QuadInstance[] quads;
         
-        public void Parse(BinaryReaderBigEndian reader)
+        public static MapChunk Parse(BinaryReaderBigEndian reader)
         {
+            var m = new MapChunk();
+            
             reader.BaseStream.Seek(1, SeekOrigin.Current);
-            headerA1 = reader.ReadByte();
-            headerA2 = reader.ReadByte();
+            m.headerA1 = reader.ReadByte();
+            m.headerA2 = reader.ReadByte();
             reader.BaseStream.Seek(2, SeekOrigin.Current);
-            headerB1 = reader.ReadByte();
-            headerB2 = reader.ReadByte();
+            m.headerB1 = reader.ReadByte();
+            m.headerB2 = reader.ReadByte();
             reader.BaseStream.Seek(2, SeekOrigin.Current);
-            headerC1 = reader.ReadByte();
-            headerC2 = reader.ReadByte();
+            m.headerC1 = reader.ReadByte();
+            m.headerC2 = reader.ReadByte();
             reader.BaseStream.Seek(2, SeekOrigin.Current);
-            headerD1 = reader.ReadByte();
-            headerD2 = reader.ReadByte();
+            m.headerD1 = reader.ReadByte();
+            m.headerD2 = reader.ReadByte();
             reader.BaseStream.Seek(1, SeekOrigin.Current);
             
-            quads = new QuadInstance[48];
+            m.quads = new QuadInstance[48];
             
-            for (int i = 0; i < quads.Length; i++)
+            for (int i = 0; i < m.quads.Length; i++)
             {
-                var quad = new QuadInstance();
-                quad.Parse(reader);
-                quads[i] = quad;
+                var quad = QuadInstance.Parse(reader);
+                m.quads[i] = quad;
             }
+
+            return m;
         }
     }
 
-    public struct QuadInstance : IParsable
+    public struct QuadInstance
     {
         public int quadDescriptorIndex;
         public int flagA;
         public int flagB;
         
-        public void Parse(BinaryReaderBigEndian reader)
+        public static QuadInstance Parse(BinaryReaderBigEndian reader)
         {
-            quadDescriptorIndex = reader.ReadUInt16();
-            flagA = reader.ReadByte();
-            flagB = reader.ReadByte();
+            return new QuadInstance
+            {
+                quadDescriptorIndex = reader.ReadUInt16(),
+                flagA = reader.ReadByte(),
+                flagB = reader.ReadByte()
+            };
         }
     }
 }

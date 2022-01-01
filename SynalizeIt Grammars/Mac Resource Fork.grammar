@@ -1,113 +1,106 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ufwb version="1.17">
-    <grammar name="Resource Fork" start="id:41" author="Michael Stevenson">
+    <grammar name="Resource Fork" start="id:3" author="Michael Stevenson">
         <description>Grammar for my file format</description>
-        <structure name="ResourceFork" id="41" encoding="ISO_8859-1:1987" endian="big" signed="no">
+        <structure name="ResourceFork" id="3" encoding="ISO_8859-1:1987" endian="big" signed="no">
             <description>Based on https://github.com/dgelessus/python-rsrcfork
 
 All integers are big-endian. Most are unsigned.
 -1 is a placeholder or represents that all bits are set.
 Resource ID field is signed.</description>
-            <structure name="ResourceHeader" id="49">
-                <description>Resource file header, found at the start of the resource file.</description>
-                <number name="DataOffset" id="43" type="integer" length="4" display="hex">
-                    <description>Offset from beginning of resource file to resource data. Basically guaranteed to be 0x100.</description>
+            <offset name="DataOffset" id="5" length="4" references="id:4" follownullreference="yes">
+                <description>Offset from beginning of resource file to resource data. Basically guaranteed to be 0x100.</description>
+            </offset>
+            <offset name="MapOffset" id="7" length="4" references="id:6" follownullreference="yes">
+                <description>Offset from beginning of resource file to resource map.</description>
+            </offset>
+            <number name="DataLength" id="8" type="integer" length="4" display="hex">
+                <description>Length of resource data.</description>
+            </number>
+            <number name="MapLength" id="9" type="integer" length="4" display="hex">
+                <description>Length of resource map.</description>
+            </number>
+            <binary name="SystemReserved" id="10" length="112">
+                <description>System-reserved data. In practice, this is usually all null bytes.</description>
+            </binary>
+            <binary name="AppData" id="11" length="128"/>
+        </structure>
+        <structure name="ResourceDataBlock" id="13" repeatmax="-1" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="DataLength" id="16" fillcolor="00A6D0" type="integer" length="4" display="hex">
+                <description>Length of following resource data.</description>
+            </number>
+            <binary name="ResourceData" id="17" fillcolor="7DC8FF" length="DataLength"/>
+        </structure>
+        <structure name="ResourceData" id="4" length="DataLength" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="ResourceDataBlock" id="14" repeatmax="-1" structure="id:13"/>
+        </structure>
+        <structure name="ResourceMap" id="6" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <description>Header for the resource map, found immediately after the last resource data block. This position is also indicated in the header.</description>
+            <binary name="ResourceHeaderMemory" id="19" length="16">
+                <description>Reserved for copy of resource header (in memory). Should be 0 in the file.</description>
+            </binary>
+            <binary name="ReservedHandleMemory" id="20" length="4">
+                <description>Reserved for handle to next resource map to be searched (in memory). Should be 0 in file.</description>
+            </binary>
+            <binary name="ReferenceNumberMemory" id="21" length="2">
+                <description>Reserved for file reference number (in memory). Should be 0 in file.</description>
+            </binary>
+            <number name="FileAttributes" id="22" type="integer" length="2">
+                <description>Resource file attributes. Combination of ResourceFileAttrs flags.</description>
+            </number>
+            <offset name="TypeListOffset" id="24" length="2" references="id:23" relative-to="id:6" follownullreference="yes">
+                <description>Offset from beginning of resource map to type list.</description>
+            </offset>
+            <offset name="NameListOffset" id="26" length="2" references="id:25" relative-to="id:6" follownullreference="yes">
+                <description>Offset from beginning of resource map to resource name list.</description>
+            </offset>
+        </structure>
+        <structure name="ResourceTypeList" id="23" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="TypeListLength" id="28" type="integer" length="2" valueexpression="TypeListLength + 1">
+                <description>Number of resource types in the map minus 1.</description>
+            </number>
+            <structure name="ResourceType" id="29" length="0" repeatmin="0" repeatmax="TypeListLength">
+                <description>A single type in the type list.</description>
+                <string name="ResourceType" id="30" type="fixed-length" length="4">
+                    <description>Resource type. This is usually a 4-character ASCII mnemonic, but may be any 4 bytes.</description>
+                </string>
+                <number name="ResourceCount" id="31" type="integer" length="2" valueexpression="ResourceCount + 1">
+                    <description>Number of resources of this type in the map minus 1.</description>
                 </number>
-                <number name="MapOffset" id="44" type="integer" length="4" display="hex">
-                    <description>Offset from beginning of resource file to resource map.</description>
-                </number>
-                <number name="DataLength" id="45" type="integer" length="4" display="hex">
-                    <description>Length of resource data.</description>
-                </number>
-                <number name="MapLength" id="46" type="integer" length="4" display="hex">
-                    <description>Length of resource map.</description>
-                </number>
-                <binary name="SystemReserved" id="47" length="112">
-                    <description>System-reserved data. In practice, this is usually all null bytes.</description>
-                </binary>
-                <binary name="AppData" id="48" length="128"/>
-            </structure>
-            <structure name="ResourceData" id="87" length="DataLength">
-                <structure name="ResourceDataBlock" id="85" repeatmin="0" repeatmax="-1">
-                    <structure name="ResourceDataHeader" id="59">
-                        <description>Header for a single resource data block, found immediately before the resource data itself.</description>
-                        <number name="DataLength" id="61" fillcolor="00A6D0" type="integer" length="4" display="hex">
-                            <description>Length of following resource data.</description>
-                        </number>
-                    </structure>
-                    <binary name="ResourceData" id="80" fillcolor="7DC8FF" length="DataLength"/>
-                </structure>
-            </structure>
-            <structure name="ResourceMapHeader" id="51">
-                <description>Header for the resource map, found immediately after the last resource data block. This position is also indicated in the header.</description>
-                <binary name="ResourceHeaderMemory" id="54" length="16">
-                    <description>Reserved for copy of resource header (in memory). Should be 0 in the file.</description>
-                </binary>
-                <binary name="ReservedHandleMemory" id="55" length="4">
-                    <description>Reserved for handle to next resource map to be searched (in memory). Should be 0 in file.</description>
-                </binary>
-                <binary name="ReferenceNumberMemory" id="56" length="2">
-                    <description>Reserved for file reference number (in memory). Should be 0 in file.</description>
-                </binary>
-                <number name="FileAttributes" id="53" type="integer" length="2">
-                    <description>Resource file attributes. Combination of ResourceFileAttrs flags.</description>
-                </number>
-                <number name="MapTypeListOffset" id="57" type="integer" length="2" display="hex">
-                    <description>Offset from beginning of resource map to type list.</description>
-                </number>
-                <number name="MapNameListOffset" id="58" type="integer" length="2" display="hex">
-                    <description>Offset from beginning of resource map to resource name list.</description>
-                </number>
-            </structure>
-            <structure name="ResourceTypes" id="98">
-                <structure name="ResourceTypeListHeader" id="62">
-                    <description>Header for the type list, found immediately after the resource map header.</description>
-                    <number name="TypeListLength" id="64" type="integer" length="2" valueexpression="TypeListLength + 1">
-                        <description>Number of resource types in the map minus 1.</description>
-                    </number>
-                </structure>
-                <structure name="ResourceType" id="65" length="0" repeatmin="0" repeatmax="TypeListLength">
-                    <description>A single type in the type list.</description>
-                    <string name="ResourceType" id="92" type="fixed-length" length="4">
-                        <description>Resource type. This is usually a 4-character ASCII mnemonic, but may be any 4 bytes.</description>
-                    </string>
-                    <number name="ResourceCount" id="68" type="integer" length="2" valueexpression="ResourceCount + 1">
-                        <description>Number of resources of this type in the map minus 1.</description>
-                    </number>
-                    <number name="TypeListOffset" id="69" type="integer" length="2" display="hex">
-                        <description>Offset from beginning of type list to reference list for resources of this type.</description>
-                    </number>
-                </structure>
-            </structure>
-            <structure name="ResourceReferenceList" id="96" length="0">
-                <description>A reference list has no header, and neither does the list of reference lists.</description>
-                <structure name="ResourceReference" id="70" repeatmax="231">
-                    <description>A single resource reference in a reference list. (A reference list has no header, and neither does the list of reference lists.)</description>
-                    <number name="ResourceID" id="72" type="integer" length="2" signed="yes">
-                        <description>Resource ID. SIgned.</description>
-                    </number>
-                    <number name="NameOffset" id="73" type="integer" length="2" display="hex">
-                        <description>Offset from beginning of resource name list to length of resource name, or -1 (0xffff) if none.</description>
-                    </number>
-                    <number name="Attributes" id="74" type="integer" length="1">
-                        <description>Resource attributes. Combination of ResourceAttrs flags, see below. (Note: packed into 4 bytes together with the next 3 bytes.)</description>
-                    </number>
-                    <number name="DataOffset" id="75" type="integer" length="3" display="hex">
-                        <description>Offset from beginning of resource data to length of data for this resource. (Note: packed into 4 bytes together with the previous 1 byte.)</description>
-                    </number>
-                    <binary name="HandleMemory" id="76" length="4">
-                        <description>Reserved for handle to resource (in memory). Should be 0 in file.</description>
-                    </binary>
-                </structure>
+                <offset name="ReferenceListOffset" id="33" length="2" references="id:32" relative-to="id:23" follownullreference="yes">
+                    <description>Offset from beginning of type list to reference list for resources of this type.</description>
+                </offset>
             </structure>
         </structure>
-        <structure name="ResourceName" id="93" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <structure name="ResourceNameHeader" id="77">
-                <number name="NameLength" id="79" type="integer" length="1">
-                    <description>Length of following resource name.</description>
+        <structure name="ResourceReferenceList" id="32" length="0" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <description>A reference list has no header, and neither does the list of reference lists.</description>
+            <structure name="ResourceReference" id="36" encoding="ISO_8859-1:1987" endian="big" signed="no">
+                <description>A single resource reference in a reference list. (A reference list has no header, and neither does the list of reference lists.)</description>
+                <number name="ResourceID" id="37" type="integer" length="2" signed="yes">
+                    <description>Resource ID. SIgned.</description>
                 </number>
+                <offset name="NameOffset" id="39" length="2" references="id:38" additional="MapOffset + NameListOffset" follownullreference="no">
+                    <description>Offset from beginning of resource name list to length of resource name, or -1 (0xffff) if none.</description>
+                </offset>
+                <number name="Attributes" id="40" type="integer" length="1">
+                    <description>Resource attributes. Combination of ResourceAttrs flags, see below. (Note: packed into 4 bytes together with the next 3 bytes.)</description>
+                </number>
+                <offset name="DataBlockOffset" id="41" length="3" references="id:13" additional="DataOffset" follownullreference="yes">
+                    <description>Offset from beginning of resource data to length of data for this resource. (Note: packed into 4 bytes together with the previous 1 byte.)</description>
+                </offset>
+                <binary name="HandleMemory" id="42" length="4">
+                    <description>Reserved for handle to resource (in memory). Should be 0 in file.</description>
+                </binary>
             </structure>
-            <string name="ResourceName" id="95" type="fixed-length" length="NameLength"/>
+        </structure>
+        <structure name="ResourceNameList" id="25" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <structref name="ResourceName" id="45" structure="id:38"/>
+        </structure>
+        <structure name="ResourceName" id="38" repeatmax="-1" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="NameLength" id="47" type="integer" length="1">
+                <description>Length of following resource name.</description>
+            </number>
+            <string name="ResourceName" id="48" type="fixed-length" length="NameLength"/>
         </structure>
     </grammar>
 </ufwb>

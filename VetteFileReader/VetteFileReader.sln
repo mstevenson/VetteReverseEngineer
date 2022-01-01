@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteFileReader", "VetteFileReader\VetteFileReader.csproj", "{808378CD-7508-45B4-8D08-F18E20A388CA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteFileReaderUtil", "VetteFileReaderUtil\VetteFileReaderUtil.csproj", "{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -13,6 +15,10 @@ Global
 		{808378CD-7508-45B4-8D08-F18E20A388CA}.Debug|x86.Build.0 = Debug|x86
 		{808378CD-7508-45B4-8D08-F18E20A388CA}.Release|x86.ActiveCfg = Release|x86
 		{808378CD-7508-45B4-8D08-F18E20A388CA}.Release|x86.Build.0 = Release|x86
+		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = VetteFileReader\VetteFileReader.csproj

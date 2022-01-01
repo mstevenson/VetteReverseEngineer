@@ -11,7 +11,7 @@ namespace VetteFileReader
 		byte[] a32 = new byte[4];
 		byte[] a64 = new byte[8];
 
-		public BinaryReaderBigEndian (System.IO.Stream stream) : base(stream) {}
+		public BinaryReaderBigEndian (Stream stream) : base(stream) {}
 
 		public new Int16 ReadInt16 ()
 		{
@@ -43,7 +43,7 @@ namespace VetteFileReader
 
 		public new UInt32 ReadUInt32 ()
 		{
-			base.Read (a32, 0, 2);
+			base.Read (a32, 0, 4);
 			Array.Reverse (a32);
 			return BitConverter.ToUInt32 (a32, 0);
 		}

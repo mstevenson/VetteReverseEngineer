@@ -1,16 +1,19 @@
 namespace VetteFileReader
 {
-    public struct Vector : IParsable
+    public struct Vector
     {
         public int x;
         public int y;
         public int z;
-
-        public void Parse(BinaryReaderBigEndian reader)
+        
+        public static Vector Parse(BinaryReaderBigEndian reader)
         {
-            x = reader.ReadInt16();
-            y = reader.ReadInt16();
-            z = reader.ReadInt16();
+            return new Vector()
+            {
+                x = reader.ReadInt16(),
+                y = reader.ReadInt16(),
+                z = reader.ReadInt16(),
+            };
         }
     }
 }
