@@ -8,7 +8,7 @@
     <ProjectGuid>{808378CD-7508-45B4-8D08-F18E20A388CA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>VetteFileReader</RootNamespace>
-    <AssemblyName>VetteFileReader</AssemblyName>
+    <AssemblyName>VetteDataParser</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">

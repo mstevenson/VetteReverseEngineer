@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteFileReader", "VetteFileReader\VetteFileReader.csproj", "{808378CD-7508-45B4-8D08-F18E20A388CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteDataParser", "VetteDataParser\VetteDataParser.csproj", "{808378CD-7508-45B4-8D08-F18E20A388CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteFileReaderUtil", "VetteFileReaderUtil\VetteFileReaderUtil.csproj", "{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteUtil", "VetteUtil\VetteUtil.csproj", "{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacResourceFork", "MacResourceFork\MacResourceFork.csproj", "{FC01A7E3-FD84-46F0-BCE8-DF3D4BBC158F}"
 EndProject

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using MacResourceFork;
-using VetteFileReader;
 
 class App
 {

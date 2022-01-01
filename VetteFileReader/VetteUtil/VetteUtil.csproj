@@ -6,11 +6,12 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <LangVersion>8</LangVersion>
+        <RootNamespace>VetteFileReaderUtil</RootNamespace>
     </PropertyGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\MacResourceFork\MacResourceFork.csproj" />
-      <ProjectReference Include="..\VetteFileReader\VetteFileReader.csproj" />
+      <ProjectReference Include="..\VetteDataParser\VetteDataParser.csproj" />
     </ItemGroup>
 
 </Project>
