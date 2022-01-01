@@ -1,4 +1,4 @@
-using System.IO;
+using MacResourceFork;
 
 namespace VetteFileReader
 {

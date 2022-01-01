@@ -1,3 +1,5 @@
+using MacResourceFork;
+
 namespace VetteFileReader
 {
     public struct Vector

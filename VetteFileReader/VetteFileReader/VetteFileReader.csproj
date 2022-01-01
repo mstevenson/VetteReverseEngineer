@@ -33,34 +33,29 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Posix" />
-    <Reference Include="Mono.Posix.NETStandard, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51">
-      <HintPath>..\packages\Mono.Posix.NETStandard.5.20.1-preview\lib\net40\Mono.Posix.NETStandard.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\DataTypes\MainMapResource.cs" />
+    <Compile Include="Code\DataTypes\ObjResource.cs" />
+    <Compile Include="Code\DataTypes\PatternsResource.cs" />
+    <Compile Include="Code\DataTypes\QuadDescriptorDataResource.cs" />
+    <Compile Include="Code\DataTypes\StreetNamesResource.cs" />
+    <Compile Include="Code\DataTypes\Vector.cs" />
     <Compile Include="Code\IResource.cs" />
-    <Compile Include="DataTypes\MainMapResource.cs" />
-    <Compile Include="DataTypes\PatternsResource.cs" />
-    <Compile Include="DataTypes\QuadDescriptorDataResource.cs" />
-    <Compile Include="DataTypes\Vector.cs" />
-    <Compile Include="MacResourceFork\MacResourceFork.cs" />
-    <Compile Include="MacResourceFork\ResourceAttrs.cs" />
-    <Compile Include="MacResourceFork\ResourceFileAttrs.cs" />
+    <Compile Include="Code\VetteData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Code\ByteArrayExtension.cs" />
-    <Compile Include="Code\ResourceDataConverter.cs" />
-    <Compile Include="Code\BinaryReaderBigEndian.cs" />
-    <Compile Include="DataTypes\StreetNames.cs" />
-    <Compile Include="DataTypes\ObjResource.cs" />
+    <Compile Include="Code\VetteResourceParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
     <Folder Include="Code\" />
-    <Folder Include="DataTypes\" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <ProjectReference Include="..\MacResourceFork\MacResourceFork.csproj">
+      <Project>{fc01a7e3-fd84-46f0-bce8-df3d4bbc158f}</Project>
+      <Name>MacResourceFork</Name>
+    </ProjectReference>
   </ItemGroup>
 </Project>

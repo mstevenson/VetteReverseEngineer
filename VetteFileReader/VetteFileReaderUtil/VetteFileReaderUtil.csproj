@@ -9,6 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MacResourceFork\MacResourceFork.csproj" />
       <ProjectReference Include="..\VetteFileReader\VetteFileReader.csproj" />
     </ItemGroup>
 

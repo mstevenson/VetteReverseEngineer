@@ -1,36 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
 
-namespace VetteFileReader
+namespace MacResourceFork
 {
-    public class ResourceFork
-    {
-        public List<Resource> resources = new List<Resource>();
-        
-        public IEnumerable<Resource> GetResourcesOfType(string typeName)
-        {
-            return resources.Where(r => r.typeString == typeName);
-        }
-        
-        public Resource GetResourceWithName(string typeName, string resourceName)
-        {
-            return GetResourcesOfType(typeName).FirstOrDefault(r => r.name == resourceName);
-        }
-    }
-        
-    public class Resource
-    {
-        public byte[] type;
-        public string typeString;
-        public int id;
-        public ResourceAttrs attributes;
-        public string name;
-        public byte[] data;
-    }
-    
     // Based on https://github.com/dgelessus/python-rsrcfork
     public static class ResourceForkParser
     {

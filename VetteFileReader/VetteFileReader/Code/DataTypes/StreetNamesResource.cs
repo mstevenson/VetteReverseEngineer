@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using MacResourceFork;
 
 namespace VetteFileReader
 {
-	public class StreetNames : IResource
+	public class StreetNamesResource : IResource
 	{
 		public List<string> names = new List<string>();
 		

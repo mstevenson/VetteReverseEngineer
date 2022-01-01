@@ -1,7 +1,7 @@
 using System;
 using System.IO;
 
-namespace VetteFileReader
+namespace MacResourceFork
 {
 	public class BinaryReaderBigEndian : BinaryReader
 	{

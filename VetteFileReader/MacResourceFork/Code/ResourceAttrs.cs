@@ -1,6 +1,6 @@
 using System;
 
-namespace VetteFileReader
+namespace MacResourceFork
 {
     /// <summary>
     /// Resource attribute flags. The descriptions for these flags are taken from comments on the res*Bit
