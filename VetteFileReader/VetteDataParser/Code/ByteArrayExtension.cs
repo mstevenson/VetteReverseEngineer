@@ -1,5 +1,5 @@
 using System;
-namespace VetteFileReader
+namespace Vette
 {
 	// http://stackoverflow.com/questions/1275572/bit-shifting-n-bits
 

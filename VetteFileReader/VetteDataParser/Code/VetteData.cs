@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MacResourceFork;
 
-namespace VetteFileReader
+namespace Vette
 {
+    [Serializable]
     public class VetteData
     {
         public MainMapResource mainMap;
@@ -11,12 +13,22 @@ namespace VetteFileReader
         public List<ObjResource> objs = new List<ObjResource>();
         public List<string> streetNames = new List<string>();
         public List<PatternsResource> patterns = new List<PatternsResource>();
+        
+        public static VetteData LoadDataFork(string filePath)
+        {
+            var resourceData = ResourceForkParser.LoadDataFork(filePath);
+            return Parse(resourceData);
+        }
+        
+        public static VetteData LoadResourceFork(string filePath)
+        {
+            var resourceData = ResourceForkParser.LoadResourceFork(filePath);
+            return Parse(resourceData);
+        }
 
-        public static VetteData Parse(string filePath)
+        private static VetteData Parse(ResourceFork resourceFork)
         {
             var data = new VetteData();
-            
-            var resourceFork = ResourceForkParser.LoadResourceFork(filePath);
 
             var map = resourceFork.GetResourceWithName("MAPS", "Main_Map");
             data.mainMap = VetteResourceParser.Parse<MainMapResource>(map);

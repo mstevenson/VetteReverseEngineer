@@ -27,6 +27,6 @@ Global
 		{FC01A7E3-FD84-46F0-BCE8-DF3D4BBC158F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = VetteFileReader\VetteFileReader.csproj
+		StartupItem = VetteDataParser\VetteDataParser.csproj
 	EndGlobalSection
 EndGlobal

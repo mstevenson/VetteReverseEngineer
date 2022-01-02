@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using MacResourceFork;
-using VetteFileReader;
+using Vette;
 
 class App
 {
@@ -22,7 +22,7 @@ class App
         
         // ResourceForkParser.LogOutput = true;
         
-        var vetteData = VetteData.Parse(filePath);
+        // var vetteData = VetteData.Parse(filePath);
         
         // Console.WriteLine($"main map chunks: {vetteData.mainMap.chunks}");
         // Console.WriteLine($"quads: {vetteData.quadDescriptors.Count}");

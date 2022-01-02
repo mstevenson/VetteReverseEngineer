@@ -7,9 +7,10 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{808378CD-7508-45B4-8D08-F18E20A388CA}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>VetteFileReader</RootNamespace>
+    <RootNamespace>VetteDataParser</RootNamespace>
     <AssemblyName>VetteDataParser</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <LangVersion>7</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>True</DebugSymbols>
@@ -36,12 +37,22 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Code\DataTypes\DrawingMode.cs" />
     <Compile Include="Code\DataTypes\MainMapResource.cs" />
+    <Compile Include="Code\DataTypes\MapChunk.cs" />
+    <Compile Include="Code\DataTypes\ObjInstance.cs" />
     <Compile Include="Code\DataTypes\ObjResource.cs" />
     <Compile Include="Code\DataTypes\PatternsResource.cs" />
+    <Compile Include="Code\DataTypes\Polygon.cs" />
+    <Compile Include="Code\DataTypes\PatternName.cs" />
+    <Compile Include="Code\DataTypes\PolygonArray.cs" />
+    <Compile Include="Code\DataTypes\QuadDescriptor.cs" />
     <Compile Include="Code\DataTypes\QuadDescriptorDataResource.cs" />
+    <Compile Include="Code\DataTypes\QuadInstance.cs" />
+    <Compile Include="Code\DataTypes\Road.cs" />
     <Compile Include="Code\DataTypes\StreetNamesResource.cs" />
     <Compile Include="Code\DataTypes\Vector.cs" />
+    <Compile Include="Code\DataTypes\VertexArray.cs" />
     <Compile Include="Code\IResource.cs" />
     <Compile Include="Code\VetteData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

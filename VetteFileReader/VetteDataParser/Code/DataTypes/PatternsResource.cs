@@ -1,10 +1,13 @@
 using System.Collections.Generic;
 using MacResourceFork;
 
-namespace VetteFileReader
+namespace Vette
 {
     public class PatternsResource : IResource
     {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        
         public List<Pattern> patterns = new List<Pattern>();
         
         public void Parse(BinaryReaderBigEndian reader)

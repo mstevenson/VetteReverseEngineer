@@ -1,12 +1,14 @@
+using System;
 using MacResourceFork;
 
-namespace VetteFileReader
+namespace Vette
 {
+    [Serializable]
     public struct Vector
     {
-        public int x;
-        public int y;
-        public int z;
+        public short x;
+        public short y;
+        public short z;
         
         public static Vector Parse(BinaryReaderBigEndian reader)
         {

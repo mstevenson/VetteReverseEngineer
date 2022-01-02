@@ -1,0 +1,27 @@
+using System;
+using MacResourceFork;
+
+namespace Vette
+{
+    [Serializable]
+    public struct PolygonArray
+    {
+        public int polyCount;
+        public Polygon[] polys;
+
+        public static PolygonArray Parse(BinaryReaderBigEndian reader)
+        {
+            var p = new PolygonArray();
+			
+            p.polyCount = reader.ReadInt16() + 1; // length of 0 indicates one quad
+            p.polys = new Polygon[p.polyCount];
+
+            for (int i = 0; i < p.polyCount; i++)
+            {
+                p.polys[i] = Polygon.Parse(reader);
+            }
+
+            return p;
+        }
+    }
+}
