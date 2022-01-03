@@ -16,7 +16,7 @@
     <DebugSymbols>True</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>False</Optimize>
-    <OutputPath>..\..\VetteUnityEditor\Assets\</OutputPath>
+    <OutputPath>..\..\VetteUnityEditor\Assets\Plugins\</OutputPath>
     <DefineConstants>DEBUG;</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -26,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>none</DebugType>
     <Optimize>True</Optimize>
-    <OutputPath>..\..\VetteUnityEditor\Assets\</OutputPath>
+    <OutputPath>..\..\VetteUnityEditor\Assets\Plugins\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>True</Externalconsole>
@@ -42,6 +42,7 @@
     <Compile Include="Code\DataTypes\MapChunk.cs" />
     <Compile Include="Code\DataTypes\ObjInstance.cs" />
     <Compile Include="Code\DataTypes\ObjResource.cs" />
+    <Compile Include="Code\DataTypes\Pattern.cs" />
     <Compile Include="Code\DataTypes\PatternsResource.cs" />
     <Compile Include="Code\DataTypes\Polygon.cs" />
     <Compile Include="Code\DataTypes\PatternName.cs" />
@@ -53,7 +54,7 @@
     <Compile Include="Code\DataTypes\StreetNamesResource.cs" />
     <Compile Include="Code\DataTypes\Vector.cs" />
     <Compile Include="Code\DataTypes\VertexArray.cs" />
-    <Compile Include="Code\IResource.cs" />
+    <Compile Include="Code\ResourceBase.cs" />
     <Compile Include="Code\VetteData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Code\ByteArrayExtension.cs" />
