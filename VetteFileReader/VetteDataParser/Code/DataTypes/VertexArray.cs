@@ -7,7 +7,7 @@ namespace Vette
     [Serializable]
     public class VertexArray
     {
-        public uint vertexCount;
+        public int vertexCount;
         
         // The first four verts have an unknown effect.
         // When changing them on car models, parts of the car disappear.
@@ -17,7 +17,7 @@ namespace Vette
         {
             var v = new VertexArray();
 			
-            v.vertexCount = reader.ReadUInt16() + 1U; // number of vertices minus one
+            v.vertexCount = reader.ReadUInt16() + 1; // number of vertices
             v.vertices = new Vector[v.vertexCount];
 			
             for (int i = 0; i < v.vertexCount; i++)

@@ -13,7 +13,7 @@ namespace Vette
         {
             var p = new PolygonArray();
 			
-            p.polyCount = reader.ReadInt16() + 1; // length of 0 indicates one quad
+            p.polyCount = reader.ReadInt16() + 1;
             p.polys = new Polygon[p.polyCount];
 
             for (int i = 0; i < p.polyCount; i++)

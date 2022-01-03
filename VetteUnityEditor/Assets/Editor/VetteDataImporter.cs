@@ -1,11 +1,9 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using DefaultNamespace;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.Experimental.Rendering;
-using UnityEngine.Rendering;
 using Vette;
 
 namespace Editor
@@ -31,7 +29,8 @@ namespace Editor
         {
             var objsFolder = CreateFolder("Objects");
             var meshesFolder = CreateFolder("Meshes");
-            var matsFolder = CreateFolder("Materials");
+
+            // CreateMaterials(dataAsset.data);
             
             // import models
             foreach (var obj in dataAsset.data.objs)
@@ -59,23 +58,18 @@ namespace Editor
             }
         }
         
-        public static Mesh CreateMesh(ObjResource obj)
+        public static Mesh CreateMesh(ObjResource vetteObj)
         {
-            // var allMaterials = CreateMaterials();
-            
             // TODO ignore the 4th point? We only need 3 points for a triangle, but Vette models might give all four points
 
             var faceMeshes = new List<Mesh>();
-            var materials = new List<Material>();
+
+            var polyCount = vetteObj.polygons.polyCount;
             
-            // maps a Vette color index to a material
-            var colorIndexToMaterialMap = new Dictionary<int, int>();
-            
-            // Winding order is opposite of Unity
-            for (var i = obj.polygons.polyCount - 1; i >= 0; i--)
+            // Create a triangulated mesh for each face
+            for (var i = 0; i < polyCount; i++)
             {
-                var vettePolygon = obj.polygons.polys[i];
-                // var colorIndex = vettePolygon.patternIndex
+                var vettePolygon = vetteObj.polygons.polys[i];
                 
                 // Ignore lines which have three points
                 // TODO use submesh with topology wireframe type
@@ -84,43 +78,85 @@ namespace Editor
                     return null;
                 }
             
+                // Create triangulated meshes
+                
                 var newPoly = new Poly2Mesh.Polygon
                 {
                     outside = new List<Vector3>()
                 };
                 foreach (var vertexIndex in vettePolygon.vertexIndices)
                 {
-                    var vert = obj.vertices.vertices[vertexIndex];
-                
-                    // Y axis is inverted
-                    vert.y *= -1;
-                
+                    var vert = vetteObj.vertices.vertices[vertexIndex];
+                    vert.y *= -1; // Vette model Y axis is inverted
                     newPoly.outside.Add(new Vector3(vert.x, vert.y, vert.z));
                 }
-            
-                // TODO z-facing polys need their normals flipped
-
+                
                 var mesh = Poly2Mesh.CreateMesh(newPoly);
                 faceMeshes.Add(mesh);
             }
             
-            var finalMesh = new Mesh();
-            finalMesh.subMeshCount = faceMeshes.Count;
+            // Collect all face meshes that share a pattern index
 
-            // TODO this allows submesh topology to be set to wireframe
-            // var md = new SubMeshDescriptor();
-
+            var patternIndexToSubmeshes = new Dictionary<int, List<Mesh>>();
             
-            
-            
-            for (int i = 0; i < faceMeshes.Count; i++)
+            for (int i = 0; i < polyCount; i++)
             {
-                // combinedMesh.subm
+                var patternIndex = vetteObj.polygons.polys[i].patternIndex;
+                if (!patternIndexToSubmeshes.ContainsKey(patternIndex))
+                {
+                    patternIndexToSubmeshes[patternIndex] = new List<Mesh>();
+                }
+                patternIndexToSubmeshes[patternIndex].Add(faceMeshes[i]);
+            }
+
+            // Combine all faces with a shared pattern index into a single mesh
+            
+            // Maps pattern index to combined mesh
+            var patternMeshes = new Dictionary<int, Mesh>();
+            
+            foreach (var meshesWithSharedPattern in patternIndexToSubmeshes.OrderBy(kvp => kvp.Key))
+            {
+                var mesh = new Mesh();
+                
+                var pattern = meshesWithSharedPattern.Key;
+                var meshes = meshesWithSharedPattern.Value;
+                
+                var facesCombine = new CombineInstance[meshes.Count];
+                for (int i = 0; i < meshes.Count; i++)
+                {
+                    facesCombine[i].mesh = meshes[i];
+                    facesCombine[i].transform = Matrix4x4.identity;
+                }
+                
+                mesh.CombineMeshes(facesCombine);
+                mesh.RecalculateBounds();
+                
+                patternMeshes.Add(pattern, mesh);
             }
             
-            // combinedMesh.CombineMeshes(combiner);
+            // Merge all pattern meshes as submeshes of a single mesh
+
+            var patternMaterialIndexes = new List<int>();
+            var patternMeshesCombine = new CombineInstance[patternMeshes.Count];
+            int combineIndex = 0;
+            foreach (var patternMesh in patternMeshes)
+            {
+                patternMaterialIndexes.Add(patternMesh.Key);
+                patternMeshesCombine[combineIndex].mesh = patternMesh.Value;
+                patternMeshesCombine[combineIndex].transform = Matrix4x4.identity;
+                
+                combineIndex++;
+            }
+            var finalMesh = new Mesh();
+            finalMesh.CombineMeshes(patternMeshesCombine, false);
             finalMesh.RecalculateBounds();
 
+            // var materials = new List<Material>();
+            // foreach (var materialIndex in patternMaterialIndexes)
+            // {
+            //     // TODO map pattern indexes to materials, set materials on our renderer
+            // }
+            
             return finalMesh;
         }
 
@@ -163,38 +199,31 @@ namespace Editor
         }
         
         // Create materials for each color in the Vette Main Map palette
-        // public static Material[] CreateMaterials(PatternsResource patterns)
-        // {
-        //     // TODO create a material for each pattern, which can be multiple materials
-        //
-        //     foreach (var pattern in patterns.patterns)
-        //     {
-        //         
-        //     }
-        //     
-        //     var matFolder = CreateFolder("Materials");
-        //     
-        //     var palette = Palettes.palettes[128];
-        //     var mats = new Material[palette.Length];
-        //
-        //     for (int i = 0; i < palette.Length; i++)
-        //     {
-        //         var matPath = $"{matFolder}/{i}.material";
-        //         var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
-        //         if (mat == null)
-        //         {
-        //             mat = new Material(Shader.Find("Vette/VetteShader"))
-        //             {
-        //                 color = palette[i]
-        //             };
-        //             AssetDatabase.CreateAsset(mat, matPath);
-        //         }
-        //
-        //         mats[i] = mat;
-        //     }
-        //
-        //     return mats;
-        // }
+        public static Material[] CreateMaterials(VetteData data)
+        {
+            // Create pattern textures
+            var patterns = data.patterns[0];
+            var palettes = new Palettes(); // hard-coded values
+            var patternTextures = CreatePatterns(patterns, palettes);
+            
+            var matsFolder = CreateFolder("Materials");
+            
+            var mats = new Material[patternTextures.Length];
+            for (int i = 0; i < patternTextures.Length; i++)
+            {
+                var matPath = $"{matsFolder}/Pattern {i}.material";
+                var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
+                if (mat == null)
+                {
+                    mat = new Material(Shader.Find("Vette/Pattern Shader"));
+                    AssetDatabase.CreateAsset(mat, matPath);
+                }
+                mat.mainTexture = patternTextures[i];
+                mats[i] = mat;
+            }
+        
+            return mats;
+        }
 
         private static string CreateFolder(string folderName)
         {

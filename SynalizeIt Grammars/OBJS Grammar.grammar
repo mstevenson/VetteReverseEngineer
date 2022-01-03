@@ -1,35 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ufwb version="1.17">
-    <grammar name="Vette OBJS" start="id:3" author="Michael Stevenson" uti="public.data">
+    <grammar name="Vette OBJS" start="id:50" author="Michael Stevenson" uti="public.data">
         <description>Grammar for my file format</description>
-        <structure name="OBJS Resource" id="3" encoding="ISO_8859-1:1987" endian="big" signed="yes">
-            <number name="FileLength" id="4" fillcolor="73FDFF" type="integer" length="2" signed="no"/>
-            <structure name="Vertices" id="5" length="0">
-                <number name="VertexCount" id="6" fillcolor="FF89D8" type="integer" length="2" signed="no" valueexpression="VertexCount + 1">
+        <structure name="OBJS Resource" id="50" encoding="ISO_8859-1:1987" endian="big" signed="yes">
+            <number name="DataLength" id="51" fillcolor="73FDFF" type="integer" length="2" signed="no" display="hex"/>
+            <structure name="Vertices" id="52">
+                <number name="VertexCount" id="53" fillcolor="FF89D8" type="integer" length="2" signed="no" valueexpression="VertexCount + 1">
                     <description>Total number of vertices minus one.</description>
                 </number>
-                <structref name="A" id="34" structure="id:7"/>
-                <structref name="B" id="35" structure="id:7"/>
-                <structref name="C" id="36" structure="id:7"/>
-                <structref name="D" id="37" structure="id:7"/>
-                <structref name="Vertex" id="33" repeatmax="VertexCount-4" structure="id:7">
-                    <description>Vertices that compose polygons.</description>
-                </structref>
+                <structure name="Vertex" id="54" length="8" alignment="1" repeat="id:53" repeatmax="-1" encoding="ISO_8859-1:1987" endian="big" signed="no" fillcolor="FEFFFE">
+                    <binary name="Padding" id="55" fillcolor="ECECEC" length="2">
+                        <description>Each vertex begins with 0xFFFF.</description>
+                    </binary>
+                    <number name="x" id="56" strokecolor="212121" fillcolor="FF2600" type="integer" length="2">
+                        <description>Horizontal offset.</description>
+                    </number>
+                    <number name="y" id="57" fillcolor="8DF900" type="integer" length="2">
+                        <description>Vertical offset. Value is inverted, negative Y is up.</description>
+                    </number>
+                    <number name="z" id="58" fillcolor="0096FF" type="integer" length="2">
+                        <description>Depth offset.</description>
+                    </number>
+                </structure>
             </structure>
-            <structure name="Polygons" id="14" alignment="0">
+            <structure name="Polygons" id="61" alignment="0">
                 <description>All models are stored as quads. Quads are defined as four sets of connections between two vertices.</description>
-                <number name="PolygonCount" id="15" fillcolor="FF89D8" type="integer" length="2" signed="no" valueexpression="PolygonCount + 1">
+                <number name="PolygonCount" id="62" fillcolor="FF89D8" type="integer" length="2" signed="no" valueexpression="PolygonCount + 1">
                     <description>Total number of polygons minus one.</description>
                 </number>
-                <structure name="Polygon" id="16" length="0" alignment="0" repeat="id:15" repeatmax="-1">
-                    <number name="DrawingMode" id="17" fillcolor="F6FF41" type="integer" length="2" signed="no">
+                <structure name="Polygon" id="63" length="0" alignment="0" repeat="id:62" repeatmax="-1">
+                    <number name="DrawingMode" id="64" fillcolor="F6FF41" type="integer" length="2" signed="no">
                         <fixedvalues>
                             <fixedvalue name="unknown" value="0"/>
                             <fixedvalue name="Shaded" value="1"/>
                             <fixedvalue name="Wireframe" value="4"/>
                         </fixedvalues>
                     </number>
-                    <number name="PatternIndex" id="18" fillcolor="FFC4AD" type="integer" length="2" signed="no">
+                    <number name="PatternIndex" id="65" fillcolor="FFC4AD" type="integer" length="2" signed="no">
                         <fixedvalues>
                             <fixedvalue name="White" value="0"/>
                             <fixedvalue name="Orange &amp; White" value="1"/>
@@ -65,35 +72,21 @@
                             <fixedvalue name="Dark Blue &amp; Black" value="31"/>
                         </fixedvalues>
                     </number>
-                    <number name="VertexReferenceCount" id="19" fillcolor="FFC2FB" type="integer" length="2" signed="no" valueexpression="VertexReferenceCount + 1"/>
-                    <structure name="VertexReference" id="20" length="2" alignment="0" repeatmax="VertexReferenceCount">
-                        <number name="Index" id="21" type="integer" length="12" lengthunit="bit" signed="no"/>
+                    <number name="VertexReferenceCount" id="66" fillcolor="FFC2FB" type="integer" length="2" signed="no" valueexpression="VertexReferenceCount + 1"/>
+                    <structure name="VertexReference" id="67" length="2" alignment="0" repeatmax="VertexReferenceCount">
+                        <number name="Index" id="68" type="integer" length="12" lengthunit="bit" signed="no"/>
                     </structure>
-                    <binary name="Padding" id="23" length="2">
+                    <binary name="Padding" id="70" length="2">
                         <description>Each polygon ends with 0xFFFF.</description>
                     </binary>
                 </structure>
             </structure>
-            <structure name="Occlusion" id="26" length="0">
-                <number name="Unknown" id="27" type="integer" length="2" signed="no"/>
-                <structure name="Struct" id="28" repeatmax="80">
-                    <number name="Value" id="29" type="integer" length="2"/>
+            <structure name="Occlusion" id="73" length="0">
+                <number name="Unknown" id="74" type="integer" length="2" signed="no"/>
+                <structure name="Struct" id="75" repeatmax="80">
+                    <number name="Value" id="76" type="integer" length="2"/>
                 </structure>
             </structure>
-        </structure>
-        <structure name="Vertex" id="7" length="8" alignment="1" repeatmax="-1" encoding="ISO_8859-1:1987" endian="big" signed="no" fillcolor="FEFFFE">
-            <binary name="Padding" id="8" fillcolor="ECECEC" length="2">
-                <description>Each vertex begins with 0xFFFF.</description>
-            </binary>
-            <number name="x" id="9" strokecolor="212121" fillcolor="FF2600" type="integer" length="2">
-                <description>Horizontal offset.</description>
-            </number>
-            <number name="y" id="10" fillcolor="8DF900" type="integer" length="2">
-                <description>Vertical offset. Value is inverted, negative Y is up.</description>
-            </number>
-            <number name="z" id="11" fillcolor="0096FF" type="integer" length="2">
-                <description>Depth offset.</description>
-            </number>
         </structure>
     </grammar>
 </ufwb>

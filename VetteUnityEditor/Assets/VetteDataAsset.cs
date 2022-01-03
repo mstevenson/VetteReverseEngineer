@@ -20,23 +20,5 @@ public class VetteDataAsset : ScriptableObject
         data = fileFork == FileForkType.DataFork ?
             VetteData.LoadDataFork(dataFilePath) :
             VetteData.LoadResourceFork(dataFilePath);
-        
-        // // import models
-        // foreach (var obj in data.objs)
-        // {
-        //     var mesh = VetteObject.CreateMesh(obj);
-        //     if (mesh == null)
-        //     {
-        //         continue;
-        //     }
-        //     
-        //     var go = new GameObject();
-        //     var mf = go.AddComponent<MeshFilter>();
-        //     mf.mesh = mesh;
-        //     var mr = go.AddComponent<MeshRenderer>();
-        //     mr.material = new Material(Shader.Find("Vette/VetteShader"));
-        //
-        //     go.name = $"{obj.Name} ({obj.Id})";
-        // }
     }
 }

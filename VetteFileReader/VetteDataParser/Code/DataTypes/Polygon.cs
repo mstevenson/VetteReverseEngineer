@@ -19,7 +19,7 @@ namespace Vette
             {
                 drawingMode = (DrawingMode)reader.ReadInt16(),
                 patternIndex = reader.ReadInt16(),
-                vertexCount = reader.ReadInt16() + 1 // lengths always start with 0 to represent 1 element
+                vertexCount = reader.ReadInt16() + 1
             };
 
             p.vertexIndices = new int[p.vertexCount];
