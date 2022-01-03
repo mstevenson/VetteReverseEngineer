@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct Vector
+    public class Vector
     {
         public short x;
         public short y;

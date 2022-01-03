@@ -5,7 +5,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct VertexArray
+    public class VertexArray
     {
         public uint vertexCount;
         

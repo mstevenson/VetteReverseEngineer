@@ -9,7 +9,7 @@ namespace Vette
     public class VetteData
     {
         public MainMapResource mainMap;
-        public List<QuadDescriptorDataResource> quadDescriptors = new List<QuadDescriptorDataResource>();
+        public QuadDescriptorDataResource quadDescriptors;
         public List<ObjResource> objs = new List<ObjResource>();
         public List<string> streetNames = new List<string>();
         public List<PatternsResource> patterns = new List<PatternsResource>();
@@ -32,12 +32,9 @@ namespace Vette
 
             var map = resourceFork.GetResourceWithName("MAPS", "Main_Map");
             data.mainMap = VetteResourceParser.Parse<MainMapResource>(map);
-            
-            foreach (var quadResource in resourceFork.GetResourcesOfType("QUAD"))
-            {
-                var quadParsed = VetteResourceParser.Parse<QuadDescriptorDataResource>(quadResource);
-                data.quadDescriptors.Add(quadParsed);
-            }
+
+            var quads = resourceFork.GetResourcesOfType("QUAD").First();
+            data.quadDescriptors = VetteResourceParser.Parse<QuadDescriptorDataResource>(quads);
             
             foreach (var objResource in resourceFork.GetResourcesOfType("OBJS"))
             {

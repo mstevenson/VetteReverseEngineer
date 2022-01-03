@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct QuadInstance
+    public class QuadInstance
     {
         public int quadDescriptorIndex;
         public int flagA;

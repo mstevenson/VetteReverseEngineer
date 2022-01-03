@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct ObjInstance
+    public class ObjInstance
     {
         // Corresponds with OBJ resource ID
         public float objectId;

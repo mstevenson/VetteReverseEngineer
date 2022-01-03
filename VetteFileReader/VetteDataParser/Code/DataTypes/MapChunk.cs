@@ -5,7 +5,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct MapChunk
+    public class MapChunk
     {
         public int headerA1;
         public int headerA2;

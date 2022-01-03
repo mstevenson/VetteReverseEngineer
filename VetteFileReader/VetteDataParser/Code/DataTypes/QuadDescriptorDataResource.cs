@@ -6,15 +6,12 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public class QuadDescriptorDataResource : IResource
+    public class QuadDescriptorDataResource : ResourceBase
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        
         public uint fileLength;
         public List<QuadDescriptor> quads;
         
-        public void Parse(BinaryReaderBigEndian reader)
+        public override void Parse(BinaryReaderBigEndian reader)
         {
             fileLength = reader.ReadUInt16();
             quads = new List<QuadDescriptor>();

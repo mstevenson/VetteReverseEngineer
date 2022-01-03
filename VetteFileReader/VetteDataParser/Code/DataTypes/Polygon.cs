@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct Polygon
+    public class Polygon
     {
         public DrawingMode drawingMode;
         public int patternIndex;
@@ -12,7 +12,7 @@ namespace Vette
         public int[] vertexIndices;
 
         private PatternName PatternName => (PatternName)patternIndex;
-
+        
         public static Polygon Parse(BinaryReaderBigEndian reader)
         {
             var p = new Polygon
@@ -30,7 +30,7 @@ namespace Vette
 
             for (int i = 0; i < p.vertexCount; i++)
             {
-                var indexBytes = new[] { shiftedBytes[(2*i)], shiftedBytes[(2*i)+1]};
+                var indexBytes = new[] { shiftedBytes[2*i], shiftedBytes[2*i+1]};
                 p.vertexIndices[i] = BitConverter.ToInt16(indexBytes, 0);
             }
 

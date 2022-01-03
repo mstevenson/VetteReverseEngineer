@@ -9,7 +9,7 @@ namespace Vette
 		/// <summary>
 		/// Parse binary data from a single resource extracted from a resource fork.
 		/// </summary>
-		public static T Parse<T>(byte[] bytes, int id, string name) where T : IResource, new()
+		public static T Parse<T>(byte[] bytes, int id, string name) where T : ResourceBase, new()
 		{
 			using (var stream = new MemoryStream(bytes))
 			{
@@ -20,7 +20,7 @@ namespace Vette
 		/// <summary>
 		/// Parse binary data from a Resource object extracted from a resource fork.
 		/// </summary>
-		public static T Parse<T>(Resource resource) where T : IResource, new()
+		public static T Parse<T>(Resource resource) where T : ResourceBase, new()
 		{
 			using (var stream = new MemoryStream(resource.data))
 			{
@@ -28,7 +28,7 @@ namespace Vette
 			}
 		}
 
-		private static T ParseInternal<T>(Stream stream, int id, string name) where T : IResource, new()
+		private static T ParseInternal<T>(Stream stream, int id, string name) where T : ResourceBase, new()
 		{
 			var resource = new T();
 			using (var reader = new BinaryReaderBigEndian(stream))
@@ -36,8 +36,8 @@ namespace Vette
 				resource.Parse(reader);
 			}
 
-			resource.Id = id;
-			resource.Name = name;
+			resource.id = id;
+			resource.name = name;
 			return resource;
 		}
 	}

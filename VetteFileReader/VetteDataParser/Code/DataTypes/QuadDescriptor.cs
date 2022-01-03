@@ -6,7 +6,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct QuadDescriptor
+    public class QuadDescriptor
     {
         public uint unknown;
         public uint collisionModel;

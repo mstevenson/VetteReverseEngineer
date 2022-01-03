@@ -5,19 +5,15 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public class MainMapResource : IResource
+    public class MainMapResource : ResourceBase
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        
         public int fileLength;
-        public List<MapChunk> chunks;
+        public List<MapChunk> chunks = new List<MapChunk>();
         
-        public void Parse(BinaryReaderBigEndian reader)
+        public override void Parse(BinaryReaderBigEndian reader)
         {
             fileLength = reader.ReadUInt16();
-            chunks = new List<MapChunk>();
-
+            
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
                 var chunk = MapChunk.Parse(reader);
