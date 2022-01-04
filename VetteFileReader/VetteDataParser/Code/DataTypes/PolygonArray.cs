@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public class PolygonArray
+    public struct PolygonArray
     {
         public int polyCount;
         public Polygon[] polys;

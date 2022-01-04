@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public class Polygon
+    public struct Polygon
     {
         public DrawingMode drawingMode;
         public int patternIndex;

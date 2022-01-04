@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public class Pattern
+    public struct Pattern
     {
         // 8x8 grid
         public byte[] pixelColorIndexes;

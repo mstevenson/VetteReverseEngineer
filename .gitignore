@@ -7,3 +7,11 @@ VetteFileReader/VetteFileReader/obj/
 *.userprefs
 .DS_Store
 xcuserdata/
+VetteFileReader/MacResourceFork/bin
+VetteFileReader/MacResourceFork/obj
+VetteFileReader/VetteDataParser/obj
+VetteFileReader/VetteUtil/bin
+VetteFileReader/packages
+VetteUnityEditor/Logs
+VetteUnityEditor/obj
+VetteFileReader/VetteUtil/obj

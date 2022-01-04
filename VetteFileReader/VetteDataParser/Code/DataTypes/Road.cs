@@ -4,7 +4,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public class Road
+    public struct Road
     {
         public int roadType;
 
