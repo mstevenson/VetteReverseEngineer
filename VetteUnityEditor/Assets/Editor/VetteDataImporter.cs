@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -17,6 +18,47 @@ namespace Editor
         {
             var window = GetWindow<VetteDataImporter>();
         }
+        
+        private int _paletteId = 128;
+        
+        private void OnGUI()
+        {
+            dataAsset = EditorGUILayout.ObjectField(new GUIContent("Data"), dataAsset, typeof(VetteDataAsset), false) as VetteDataAsset;
+
+            // 128, 129, 130, 131, 140, 150, 160, 170
+            _paletteId = EditorGUILayout.IntField(_paletteId);
+            
+            if (GUILayout.Button("Import patterns"))
+            {
+                // The second pattern seems to be the one used in the game
+                var patterns = dataAsset.data.patterns[1];
+                
+                CreatePatterns(patterns, new Palettes(), _paletteId);
+            }
+            
+            if (GUILayout.Button("Import models"))
+            {
+                CreatePrefabs();
+            }
+
+            if (GUILayout.Button("Import quads"))
+            {
+                CreateQuads();
+            }
+
+            EditorGUILayout.Space();
+        }
+        
+        private static string CreateFolder(string folderName)
+        {
+            var folder = $"Assets/{folderName}";
+            if (!AssetDatabase.IsValidFolder(folder))
+            {
+                AssetDatabase.CreateFolder("Assets", folderName);
+            }
+
+            return folder;
+        }
 
         public void ImportData()
         {
@@ -25,40 +67,59 @@ namespace Editor
                 VetteData.LoadResourceFork(dataAsset.dataFilePath);
         }
         
-        public void CreateGameObjects()
+        public void CreatePrefabs()
         {
+            // Create pattern materials to apply to new meshes
+
+            int paletteId = 160;
+            
+            var patterns = dataAsset.data.patterns[1]; // First pattern is used in Main Map
+            var palette = new Palettes(); // Hard-coded palettes
+            var patternMaterials = CreatePatterns(patterns, palette, paletteId);
+            
+            // Import Vette objects as meshes
+            
             var objsFolder = CreateFolder("Objects");
             var meshesFolder = CreateFolder("Meshes");
-
-            // CreateMaterials(dataAsset.data);
             
-            // import models
             foreach (var obj in dataAsset.data.objs)
             {
-                var mesh = CreateMesh(obj);
+                var (mesh, patternIndexes) = CreateMesh(obj);
                 if (mesh == null)
                 {
                     continue;
                 }
-
-                mesh.name = $"{obj.name} {obj.id}";
-                AssetDatabase.CreateAsset(mesh, $"{meshesFolder}/{mesh.name}.mesh");
                 
                 var go = new GameObject();
+                var objComponent = go.AddComponent<ObjComponent>();
+                objComponent.objName = obj.name;
+                objComponent.id = obj.id;
+                
+                mesh.name = $"{obj.id} {obj.name}";
+                AssetDatabase.CreateAsset(mesh, $"{meshesFolder}/{mesh.name}.mesh");
                 var mf = go.AddComponent<MeshFilter>();
                 mf.mesh = mesh;
                 var mr = go.AddComponent<MeshRenderer>();
                 
-                go.name = $"{obj.name} ({obj.id})";
+                // Apply materials
+                var objMaterials = new Material[mf.sharedMesh.subMeshCount];
+                for (int i = 0; i < patternIndexes.Length; i++)
+                {
+                    var mat = patternMaterials[patternIndexes[i]];
+                    objMaterials[i] = mat;
+                }
+                mr.materials = objMaterials;
+                
+                go.name = mesh.name;
 
-                // PrefabUtility.SaveAsPrefabAsset(go, $"{objsFolder}/{obj.name} {obj.id}.prefab");
-                // AssetDatabase.Refresh();
+                PrefabUtility.SaveAsPrefabAsset(go, $"{objsFolder}/{mesh.name}.prefab");
+                AssetDatabase.Refresh();
 
-                // DestroyImmediate(go);
+                DestroyImmediate(go);
             }
         }
         
-        public static Mesh CreateMesh(ObjResource vetteObj)
+        public static (Mesh mesh, int[] patternIndexes) CreateMesh(ObjResource vetteObj)
         {
             // TODO ignore the 4th point? We only need 3 points for a triangle, but Vette models might give all four points
 
@@ -75,7 +136,7 @@ namespace Editor
                 // TODO use submesh with topology wireframe type
                 if (vettePolygon.vertexCount < 3)
                 {
-                    return null;
+                    return (null, Array.Empty<int>());
                 }
             
                 // Create triangulated meshes
@@ -150,23 +211,14 @@ namespace Editor
             var finalMesh = new Mesh();
             finalMesh.CombineMeshes(patternMeshesCombine, false);
             finalMesh.RecalculateBounds();
-
-            // var materials = new List<Material>();
-            // foreach (var materialIndex in patternMaterialIndexes)
-            // {
-            //     // TODO map pattern indexes to materials, set materials on our renderer
-            // }
             
-            return finalMesh;
+            return (finalMesh, patternMaterialIndexes.ToArray());
         }
 
-        public static Texture2D[] CreatePatterns(PatternsResource patterns, Palettes palettes)
+        public static Material[] CreatePatterns(PatternsResource patterns, Palettes palettes, int paletteId)
         {
             var patternsFolder = CreateFolder("Patterns");
 
-            // int paletteId = 128;
-            int paletteId = 160;
-            
             // the first palette is used for Main Map
             var palette = palettes.palettes[paletteId];
             var textures = new Texture2D[patterns.patterns.Count];
@@ -189,68 +241,69 @@ namespace Editor
                 
                 File.WriteAllBytes($"{Application.dataPath}/Patterns/{patternFilename}", bytes);
                 DestroyImmediate(tex);
+                AssetDatabase.Refresh();
 
                 textures[patternIndex] = AssetDatabase.LoadAssetAtPath<Texture2D>($"{patternsFolder}/{patternFilename}");
+                textures[patternIndex].filterMode = FilterMode.Point;
             }
-            
-            AssetDatabase.Refresh();
-
-            return textures;
-        }
-        
-        // Create materials for each color in the Vette Main Map palette
-        public static Material[] CreateMaterials(VetteData data)
-        {
-            // Create pattern textures
-            var patterns = data.patterns[0];
-            var palettes = new Palettes(); // hard-coded values
-            var patternTextures = CreatePatterns(patterns, palettes);
             
             var matsFolder = CreateFolder("Materials");
             
-            var mats = new Material[patternTextures.Length];
-            for (int i = 0; i < patternTextures.Length; i++)
+            var mats = new Material[textures.Length];
+            for (int i = 0; i < textures.Length; i++)
             {
-                var matPath = $"{matsFolder}/Pattern {i}.material";
+                var matPath = $"{matsFolder}/Pattern {i}.mat";
                 var mat = AssetDatabase.LoadAssetAtPath<Material>(matPath);
                 if (mat == null)
                 {
                     mat = new Material(Shader.Find("Vette/Pattern Shader"));
                     AssetDatabase.CreateAsset(mat, matPath);
                 }
-                mat.mainTexture = patternTextures[i];
+                mat.mainTexture = textures[i];
                 mats[i] = mat;
             }
-        
+
+            AssetDatabase.Refresh();
+            
             return mats;
         }
 
-        private static string CreateFolder(string folderName)
+        public void CreateQuads()
         {
-            var folder = $"Assets/{folderName}";
-            if (!AssetDatabase.IsValidFolder(folder))
-            {
-                AssetDatabase.CreateFolder("Assets", folderName);
-            }
-
-            return folder;
-        }
-
-        private void OnGUI()
-        {
-            dataAsset = EditorGUILayout.ObjectField(new GUIContent("Data"), dataAsset, typeof(VetteDataAsset), false) as VetteDataAsset;
-
-            if (GUILayout.Button("Import models"))
-            {
-                CreateGameObjects();
-            }
+            // Get a list of all objects that can be instantiated
             
-            if (GUILayout.Button("Import patterns"))
+            // TODO this misses a lot of assets for some reason
+            var objPrefabs = Resources.FindObjectsOfTypeAll<ObjComponent>();
+            Debug.Log(objPrefabs.Length);
+            
+            for (var i = 0; i < dataAsset.data.quadDescriptors.quads.Count; i++)
             {
-                // The second pattern seems to be the one used in the game
-                var patterns = dataAsset.data.patterns[1];
-                
-                CreatePatterns(patterns, new Palettes());
+                var quadData = dataAsset.data.quadDescriptors.quads[i];
+                var quad = new GameObject
+                {
+                    name = $"Quad {i}"
+                };
+
+                foreach (var objInfo in quadData.objects)
+                {
+                    foreach (var objPrefab in objPrefabs)
+                    {
+                        // values not divisible by 100 are temp files and model revisions that
+                        // are not accessible in-game, so model 1505 is a revision of 1500, which is
+                        // accessed by id 15.
+                        var targetId = objPrefab.id / 100;
+                        if (objInfo.objectId != targetId)
+                        {
+                            continue;
+                        }
+
+                        var obj = Instantiate(objPrefab.gameObject, quad.transform, true);
+
+                        // z-up
+                        var pos = new Vector3(objInfo.position.x, objInfo.position.z, objInfo.position.y);
+                        obj.transform.localPosition = pos;
+                    }
+                }
             }
         }
     }

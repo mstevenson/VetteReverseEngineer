@@ -6,7 +6,7 @@ Shader "Vette/Pattern Shader"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _TexelSize ("Texel Size", Int) = 1
+        _TexelSize ("Texel Size", Int) = 4
     }
     SubShader
     {

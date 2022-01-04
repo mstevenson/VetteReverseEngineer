@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ufwb version="1.17">
-    <grammar name="Vette STRT" start="id:2" author="Michael Stevenson" uti="public.data">
+    <grammar name="Vette STRT" start="id:3" author="Michael Stevenson" uti="public.data">
         <description>Grammar for my file format</description>
-        <structure name="Street Names" id="2" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <binary name="Header" id="3" fillcolor="00C300" length="1"/>
-            <string name="Name String" id="6" fillcolor="FFDAAF" repeatmax="-1" type="pascal" length="actual" encoding="macintosh"/>
+        <structure name="Street Names" id="3" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <binary name="Header" id="4" fillcolor="00C300" length="2"/>
+            <string name="Name String" id="5" fillcolor="FFDAAF" repeatmax="-1" type="pascal" length="actual" encoding="macintosh"/>
         </structure>
     </grammar>
 </ufwb>

@@ -13,7 +13,7 @@ namespace Vette
 		public override void Parse(BinaryReaderBigEndian reader)
 		{
 			// header
-			reader.ReadByte();
+			reader.ReadUInt16();
 			
 			while (reader.BaseStream.Position < reader.BaseStream.Length)
 			{

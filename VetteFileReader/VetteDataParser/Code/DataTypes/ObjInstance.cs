@@ -7,7 +7,7 @@ namespace Vette
     public struct ObjInstance
     {
         // Corresponds with OBJ resource ID
-        public float objectId;
+        public int objectId;
         public Vector position;
 
         public static ObjInstance Parse(BinaryReaderBigEndian reader)
