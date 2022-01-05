@@ -19,21 +19,16 @@ namespace Editor
             var window = GetWindow<VetteDataImporter>();
         }
         
-        private int _paletteId = 128;
-        
         private void OnGUI()
         {
             dataAsset = EditorGUILayout.ObjectField(new GUIContent("Data"), dataAsset, typeof(VetteDataAsset), false) as VetteDataAsset;
 
-            // 128, 129, 130, 131, 140, 150, 160, 170
-            _paletteId = EditorGUILayout.IntField(_paletteId);
-            
             if (GUILayout.Button("Import patterns"))
             {
                 // The second pattern seems to be the one used in the game
                 var patterns = dataAsset.data.patterns[1];
                 
-                CreatePatterns(patterns, new Palettes(), _paletteId);
+                CreatePatterns(patterns, Palettes.MainMap);
             }
             
             if (GUILayout.Button("Import models"))
@@ -74,8 +69,7 @@ namespace Editor
             int paletteId = 160;
             
             var patterns = dataAsset.data.patterns[1]; // First pattern is used in Main Map
-            var palette = new Palettes(); // Hard-coded palettes
-            var patternMaterials = CreatePatterns(patterns, palette, paletteId);
+            var patternMaterials = CreatePatterns(patterns, Palettes.MainMap);
             
             // Import Vette objects as meshes
             
@@ -215,12 +209,11 @@ namespace Editor
             return (finalMesh, patternMaterialIndexes.ToArray());
         }
 
-        public static Material[] CreatePatterns(PatternsResource patterns, Palettes palettes, int paletteId)
+        public static Material[] CreatePatterns(PatternsResource patterns, Color32[] palette)
         {
             var patternsFolder = CreateFolder("Patterns");
 
             // the first palette is used for Main Map
-            var palette = palettes.palettes[paletteId];
             var textures = new Texture2D[patterns.patterns.Count];
             
             for (var patternIndex = 0; patternIndex < patterns.patterns.Count; patternIndex++)
