@@ -23,13 +23,13 @@ namespace Editor
         {
             dataAsset = EditorGUILayout.ObjectField(new GUIContent("Data"), dataAsset, typeof(VetteDataAsset), false) as VetteDataAsset;
 
-            if (GUILayout.Button("Import patterns"))
-            {
-                // The second pattern seems to be the one used in the game
-                var patterns = dataAsset.data.patterns[1];
-                
-                CreatePatterns(patterns, Palettes.MainMap);
-            }
+            // if (GUILayout.Button("Import patterns"))
+            // {
+            //     // The second pattern seems to be the one used in the game
+            //     var patterns = dataAsset.data.patterns[1];
+            //     
+            //     CreatePatterns(patterns, Palettes.MainMap);
+            // }
             
             if (GUILayout.Button("Import models"))
             {
@@ -41,9 +41,19 @@ namespace Editor
                 CreateQuads();
             }
 
+            if (GUILayout.Button("Instantiate Main Map"))
+            {
+                CreateMainMap();
+            }
+            
+            if (GUILayout.Button("Create Colored Main Map"))
+            {
+                CreateColoredQuads();
+            }
+
             EditorGUILayout.Space();
         }
-        
+
         private static string CreateFolder(string folderName)
         {
             var folder = $"Assets/{folderName}";
@@ -61,9 +71,25 @@ namespace Editor
                 VetteData.LoadDataFork(dataAsset.dataFilePath) :
                 VetteData.LoadResourceFork(dataAsset.dataFilePath);
         }
+
+        public static VetteAssetDatabase GetOrCreateAssetDatabase()
+        {
+            var path = "Assets/Vette Asset Database.asset";
+            
+            var db = AssetDatabase.LoadAssetAtPath<VetteAssetDatabase>(path);
+            if (db == null)
+            {
+                db = CreateInstance<VetteAssetDatabase>();
+                AssetDatabase.CreateAsset(db, path);
+                AssetDatabase.Refresh();
+            }
+            return db;
+        }
         
         public void CreatePrefabs()
         {
+            var db = GetOrCreateAssetDatabase();
+            
             // Create pattern materials to apply to new meshes
 
             int paletteId = 160;
@@ -78,6 +104,11 @@ namespace Editor
             
             foreach (var obj in dataAsset.data.objs)
             {
+                var prefabRef = new VetteObjReference
+                {
+                    id = obj.id
+                };
+
                 var (mesh, patternIndexes) = CreateMesh(obj);
                 if (mesh == null)
                 {
@@ -90,11 +121,13 @@ namespace Editor
                 objComponent.id = obj.id;
                 
                 mesh.name = $"{obj.id} {obj.name}";
-                AssetDatabase.CreateAsset(mesh, $"{meshesFolder}/{mesh.name}.mesh");
+                var meshPath = $"{meshesFolder}/{mesh.name}.mesh";
+                AssetDatabase.CreateAsset(mesh, meshPath);
+                var meshAsset = AssetDatabase.LoadAssetAtPath<Mesh>(meshPath);
                 var mf = go.AddComponent<MeshFilter>();
-                mf.mesh = mesh;
+                mf.mesh = meshAsset;
                 var mr = go.AddComponent<MeshRenderer>();
-                
+
                 // Apply materials
                 var objMaterials = new Material[mf.sharedMesh.subMeshCount];
                 for (int i = 0; i < patternIndexes.Length; i++)
@@ -104,12 +137,19 @@ namespace Editor
                 }
                 mr.materials = objMaterials;
                 
-                go.name = mesh.name;
+                go.name = meshAsset.name;
 
-                PrefabUtility.SaveAsPrefabAsset(go, $"{objsFolder}/{mesh.name}.prefab");
+                var path = $"{objsFolder}/{mesh.name}.prefab";
+                PrefabUtility.SaveAsPrefabAsset(go, path);
                 AssetDatabase.Refresh();
 
                 DestroyImmediate(go);
+
+                var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                
+                prefabRef.prefab = goPrefab;
+                prefabRef.mesh = mesh;
+                db.objs.Add(prefabRef);
             }
         }
         
@@ -211,6 +251,8 @@ namespace Editor
 
         public static Material[] CreatePatterns(PatternsResource patterns, Color32[] palette)
         {
+            var db = GetOrCreateAssetDatabase();
+            
             var patternsFolder = CreateFolder("Patterns");
 
             // the first palette is used for Main Map
@@ -254,6 +296,8 @@ namespace Editor
                 }
                 mat.mainTexture = textures[i];
                 mats[i] = mat;
+                
+                db.patternMaterials.Add(new VetteMaterialReference { patternId = i, material = mat});
             }
 
             AssetDatabase.Refresh();
@@ -263,11 +307,7 @@ namespace Editor
 
         public void CreateQuads()
         {
-            // Get a list of all objects that can be instantiated
-            
-            // TODO this misses a lot of assets for some reason
-            var objPrefabs = Resources.FindObjectsOfTypeAll<ObjComponent>();
-            Debug.Log(objPrefabs.Length);
+            var db = GetOrCreateAssetDatabase();
             
             for (var i = 0; i < dataAsset.data.quadDescriptors.quads.Count; i++)
             {
@@ -279,23 +319,221 @@ namespace Editor
 
                 foreach (var objInfo in quadData.objects)
                 {
-                    foreach (var objPrefab in objPrefabs)
+                    foreach (var objRefs in db.objs)
                     {
                         // values not divisible by 100 are temp files and model revisions that
                         // are not accessible in-game, so model 1505 is a revision of 1500, which is
                         // accessed by id 15.
-                        var targetId = objPrefab.id / 100;
-                        if (objInfo.objectId != targetId)
+                        float targetId = objRefs.id / 100f;
+                        if (Math.Abs(objInfo.objectId - targetId) > 0.0001f)
                         {
                             continue;
                         }
 
-                        var obj = Instantiate(objPrefab.gameObject, quad.transform, true);
+                        var obj = Instantiate(objRefs.prefab, quad.transform, true);
 
                         // z-up
                         var pos = new Vector3(objInfo.position.x, objInfo.position.z, objInfo.position.y);
                         obj.transform.localPosition = pos;
                     }
+                }
+                
+                var quadsFolder = CreateFolder("Quads");
+
+                var path = $"{quadsFolder}/{quad.name}.prefab";
+                PrefabUtility.SaveAsPrefabAsset(quad, path);
+                AssetDatabase.Refresh();
+                
+                DestroyImmediate(quad);
+                
+                var quadPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+                db.quads.Add(new VetteQuadReference() {id = i, prefab = quadPrefab});
+            }
+        }
+        
+        private void CreateMainMap()
+        {
+            var db = GetOrCreateAssetDatabase();
+            
+            var map = dataAsset.data.mainMap;
+
+            for (var chunkIndex = 0; chunkIndex < map.chunks.Count; chunkIndex++)
+            {
+                var chunk = map.chunks[chunkIndex];
+                var chunkObj = new GameObject
+                {
+                    name = "Chunk " + chunkIndex
+                };
+
+                for (var quadIndex = 0; quadIndex < chunk.quads.Length; quadIndex++)
+                {
+                    var chunkQuad = chunk.quads[quadIndex];
+                    int quadDescriptorIndex = chunkQuad.quadDescriptorIndex;
+                    var quadRef = db.quads.Where(q => q.id == quadDescriptorIndex).FirstOrDefault(q => q.prefab);
+                    if (quadRef == null)
+                    {
+                        Debug.LogError("Missing quad: " + quadDescriptorIndex);
+                        continue;
+                    }
+
+                    var quadObj = Instantiate(quadRef.prefab);
+                    quadObj.transform.localScale = Vector3.one * 0.0005f;
+                    quadObj.transform.position = Vector3.forward * quadIndex * 10;
+                    quadObj.transform.parent = chunkObj.transform;
+                }
+
+                chunkObj.transform.position = Vector3.right * chunkIndex * 10;
+            }
+        }
+
+        private List<Color> colors = new List<Color>();
+        
+        private void CreateColoredQuads()
+        {
+            colors.Clear();
+            
+            for (int i = 0; i < 300; i++)
+            {
+                colors.Add(Color.HSVToRGB(UnityEngine.Random.value, 1, (UnityEngine.Random.value / 2.5f) + 0.2f));
+            }
+            
+            var db = GetOrCreateAssetDatabase();
+
+            for (var i = 0; i < dataAsset.data.mainMap.chunks.Count; i++)
+            {
+                var chunk = dataAsset.data.mainMap.chunks[i];
+                for (var j = 0; j < chunk.quads.Length; j++)
+                {
+                    var quad = chunk.quads[j];
+                    var index = quad.quadDescriptorIndex;
+
+                    var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    var mr = go.GetComponent<MeshRenderer>();
+                    // mr.material.color = Color.HSVToRGB(index / 200f, 1, (index / 300f) + 0.2f);
+                    mr.material.color = colors[index];
+                    
+                    go.name = $"id {index} - y{i} x{j}";
+
+                    switch (index)
+                    {
+                        case 0:
+                            mr.material.color = new Color(0f, 0.72f, 0.75f);
+                            break;
+                        case 1: // water
+                            mr.material.color = Color.cyan;
+                            break;
+                        case 2: // transamerica
+                            mr.material.color = Color.magenta;
+                            go.name += " Transamerica";
+                            break;
+                        case 3: // gas station
+                        case 235: // alameda gas station
+                            mr.material.color = Color.red;
+                            go.name += " gas station";
+                            break;
+                        case 56: // plain concrete?
+                            mr.material.color = Color.white;
+                            break;
+                        case 60: // downtown buildings?
+                            mr.material.color = Color.gray;
+                            break;
+                        case 47: // golden gate bridge tile
+                            mr.material.color = new Color(1f, 0.3f, 0f);
+                            break;
+                        case 37: // park tile
+                            mr.material.color = Color.green;
+                            break;
+                        
+                        // unique buildings
+                        case 90: // zoo
+                        case 180:
+                        case 98:
+                            mr.material.color = Color.magenta;
+                            break;
+                        case 84:
+                            go.name += "Coit Tower";
+                            mr.material.color = Color.magenta;
+                            break;
+                        case 53:
+                            mr.material.color = Color.magenta;
+                            break;
+                        // city hall and macworld??
+                        case 83:
+                        case 99:
+                        case 107:
+                            mr.material.color = Color.magenta;
+                            break;
+                        
+                        case 75:
+                            mr.material.color = new Color(0.11f, 0.11f, 0.11f);
+                            break;
+                        
+                        case 85: // piers
+                            mr.material.color = new Color(0.86f, 0.55f, 0.56f);
+                            break;
+                        
+                        // yellow walls
+                        case 110: // corner wall
+                        case 111: // right wall
+                        case 112: // lower wall
+                        case 232: // upper wall
+                        case 126: // upper wall, uphill to left
+                            mr.material.color = Color.yellow;
+                            break;
+                        // dirt leading to cliff house
+                        case 156:
+                        case 157:
+                            mr.material.color = new Color(0.71f, 0.32f, 0.13f);
+                            break;
+                        case 168:
+                        case 190:
+                        case 114:
+                        case 115:
+                            mr.material.color = new Color(0.01f, 0.57f, 0f);
+                            break;
+                        
+                        // Hills
+                        case 68:
+                            mr.material.color = new Color(0.78f, 0.78f, 0.78f);
+                            break;
+                        case 65:
+                        case 161:
+                        case 169:
+                            mr.material.color = new Color(0.63f, 0.63f, 0.63f);
+                            break;
+                        case 70:
+                            mr.material.color = new Color(0.29f, 0.29f, 0.29f);
+                            break;
+                        case 72:
+                        case 175:
+                            mr.material.color = new Color(0.19f, 0.19f, 0.19f);
+                            break;
+                        case 64:
+                            mr.material.color = (new Color(0.78f, 0.78f, 0.78f) + new Color(0.63f, 0.63f, 0.63f)) / 2;
+                            break;
+                        case 67:
+                        case 171:
+                            mr.material.color = (new Color(0.63f, 0.63f, 0.63f) + new Color(0.29f, 0.29f, 0.29f)) / 2;
+                            break;
+                        case 71:
+                            mr.material.color = (new Color(0.78f, 0.78f, 0.78f) + new Color(0.19f, 0.19f, 0.19f)) / 2;
+                            break;
+                        case 74:
+                            mr.material.color = (new Color(0.29f, 0.29f, 0.29f) + new Color(0.19f, 0.19f, 0.19f)) / 2;
+                            break;
+                        
+                        case 165: // blue houses on grass
+                            mr.material.color = new Color(0.11f, 0.26f, 0.55f);
+                            break;
+
+                        // freeway
+                        case 120: // freeway up
+                        case 154: // freeway curve right
+                            mr.material.color = new Color(0f, 0.07f, 0.33f);
+                            break;
+                    }
+
+                    go.transform.position = new Vector3(j, 0, i);
                 }
             }
         }

@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ufwb version="1.17">
-    <grammar name="MAPS Grammar" start="id:763" author="Michael Stevenson">
+    <grammar name="MAPS Grammar" start="id:3" author="Michael Stevenson">
         <description>Grammar for my file format</description>
-        <structure name="MAPS Resource" id="763" encoding="ISO_8859-1:1987" endian="big" signed="no">
-            <number name="DataLength" id="764" fillcolor="3FD168" type="integer" length="2" display="hex" valueexpression="DataLength * 2">
+        <structure name="MAPS Resource" id="3" encoding="ISO_8859-1:1987" endian="big" signed="no">
+            <number name="DataLength" id="4" fillcolor="3FD168" type="integer" length="2" display="hex" valueexpression="DataLength * 2">
                 <description>Specifies map data length in bytes, bit shifted left once</description>
             </number>
-            <structure name="Chunk" id="765" length="0" repeatmax="-1">
-                <structure name="Header" id="766" length="4" alignment="0" repeatmin="4" repeatmax="4">
-                    <binary name="PaddingStart" id="767" fillcolor="9DF2FE" length="1"/>
-                    <number name="A" id="768" fillcolor="00CDFD" type="integer" length="1"/>
-                    <number name="B" id="769" fillcolor="00CDFE" type="integer" length="1"/>
-                    <binary name="PaddingEnd" id="770" fillcolor="9DF2FE" length="1"/>
+            <structure name="Row" id="5" length="0" repeatmax="-1">
+                <description>Row index increases from south to north of the map</description>
+                <structure name="Header" id="6" length="4" alignment="0" repeatmin="4" repeatmax="4">
+                    <binary name="PaddingStart" id="7" fillcolor="9DF2FE" length="1"/>
+                    <number name="A" id="8" fillcolor="00CDFD" type="integer" length="1"/>
+                    <number name="B" id="9" fillcolor="00CDFE" type="integer" length="1"/>
+                    <binary name="PaddingEnd" id="10" fillcolor="9DF2FE" length="1"/>
                 </structure>
-                <structure name="Element" id="772" length="4" repeatmin="48" repeatmax="48">
-                    <number name="QuadID" id="774" fillcolor="FF8CFF" type="integer" length="2">
+                <structure name="Column" id="12" length="4" repeatmin="48" repeatmax="48">
+                    <description>Column index increases from west to east of the map</description>
+                    <number name="QuadID" id="13" fillcolor="FF8CFF" type="integer" length="2">
                         <description>Specifies an ID that corresponds to a Quad in the Quad Descriptors resource. A Quad lays out one city block.</description>
                         <fixedvalues>
                             <fixedvalue name="Water" value="1"/>
@@ -23,8 +25,8 @@
                             <fixedvalue name="BroadwayTunnel" value="19"/>
                         </fixedvalues>
                     </number>
-                    <number name="unknown" id="775" fillcolor="FFD300" type="integer" length="1"/>
-                    <number name="unknown2" id="776" fillcolor="FFD300" type="integer" length="1"/>
+                    <number name="unknown" id="14" fillcolor="FFD300" type="integer" length="1"/>
+                    <number name="unknown2" id="15" fillcolor="FFD300" type="integer" length="1"/>
                 </structure>
             </structure>
         </structure>
