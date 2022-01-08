@@ -39,7 +39,7 @@
   <ItemGroup>
     <Compile Include="Code\DataTypes\DrawingMode.cs" />
     <Compile Include="Code\DataTypes\MainMapResource.cs" />
-    <Compile Include="Code\DataTypes\MapChunk.cs" />
+    <Compile Include="Code\DataTypes\MapRow.cs" />
     <Compile Include="Code\DataTypes\ObjInstance.cs" />
     <Compile Include="Code\DataTypes\ObjResource.cs" />
     <Compile Include="Code\DataTypes\Pattern.cs" />

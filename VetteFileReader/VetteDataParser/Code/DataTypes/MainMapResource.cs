@@ -8,7 +8,7 @@ namespace Vette
     public class MainMapResource : ResourceBase
     {
         public int fileLength;
-        public List<MapChunk> chunks = new List<MapChunk>();
+        public List<MapRow> rows = new List<MapRow>();
         
         public override void Parse(BinaryReaderBigEndian reader)
         {
@@ -16,8 +16,9 @@ namespace Vette
             
             while (reader.BaseStream.Position != reader.BaseStream.Length)
             {
-                var chunk = MapChunk.Parse(reader);
-                chunks.Add(chunk);
+                // Main Map rows go from south to north. Columns go from west to east.
+                var row = MapRow.Parse(reader);
+                rows.Add(row);
             }
         }
     }

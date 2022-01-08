@@ -5,7 +5,7 @@ using MacResourceFork;
 namespace Vette
 {
     [Serializable]
-    public struct MapChunk
+    public struct MapRow
     {
         public int headerA1;
         public int headerA2;
@@ -18,9 +18,9 @@ namespace Vette
         
         public QuadInstance[] quads;
         
-        public static MapChunk Parse(BinaryReaderBigEndian reader)
+        public static MapRow Parse(BinaryReaderBigEndian reader)
         {
-            var m = new MapChunk();
+            var m = new MapRow();
             
             reader.BaseStream.Seek(1, SeekOrigin.Current);
             m.headerA1 = reader.ReadByte();
