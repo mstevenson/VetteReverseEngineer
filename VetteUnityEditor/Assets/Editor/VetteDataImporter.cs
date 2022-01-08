@@ -399,6 +399,8 @@ namespace Editor
             
             var db = GetOrCreateAssetDatabase();
 
+            var mat = new Material(Shader.Find("Sprites/Default"));
+            
             for (var i = 0; i < dataAsset.data.mainMap.chunks.Count; i++)
             {
                 var chunk = dataAsset.data.mainMap.chunks[i];
@@ -407,69 +409,116 @@ namespace Editor
                     var quad = chunk.quads[j];
                     var index = quad.quadDescriptorIndex;
 
-                    var go = GameObject.CreatePrimitive(PrimitiveType.Cube);
+                    var go = GameObject.CreatePrimitive(PrimitiveType.Quad);
                     var mr = go.GetComponent<MeshRenderer>();
                     // mr.material.color = Color.HSVToRGB(index / 200f, 1, (index / 300f) + 0.2f);
+                    mr.sharedMaterial = mat;
                     mr.material.color = colors[index];
-                    
                     go.name = $"id {index} - y{i} x{j}";
-
+                    go.transform.position = new Vector2(j, i);
+                    
+                    void SetColor(Color color, string suffix = null)
+                    {
+                        mr.material.color = color;//("_Tint", color);
+                        if (suffix != null)
+                        {
+                            go.name += " - " + suffix;
+                        }
+                    }
+                    
                     switch (index)
                     {
                         case 0:
-                            mr.material.color = new Color(0f, 0.72f, 0.75f);
+                            SetColor(new Color(0f, 0.72f, 0.75f));
                             break;
                         case 1: // water
-                            mr.material.color = Color.cyan;
+                            SetColor(Color.cyan);
                             break;
                         case 2: // transamerica
-                            mr.material.color = Color.magenta;
-                            go.name += " Transamerica";
+                            SetColor(Color.magenta, "Transamerica");
                             break;
                         case 3: // gas station
                         case 235: // alameda gas station
-                            mr.material.color = Color.red;
-                            go.name += " gas station";
+                            SetColor(new Color(1f, 0f, 0.26f), "gas station");
                             break;
                         case 56: // plain concrete?
-                            mr.material.color = Color.white;
+                            SetColor(Color.white);
                             break;
-                        case 60: // downtown buildings?
-                            mr.material.color = Color.gray;
+                        case 60: // tall downtown buildings
+                        case 75: // market street
+                            SetColor(Color.gray);
                             break;
-                        case 47: // golden gate bridge tile
-                            mr.material.color = new Color(1f, 0.3f, 0f);
+                        case 62: // tall downtown buildings, dead end alleys 
+                            SetColor(new Color(0.4f, 0.4f, 0.4f));
+                            break;
+                        case 47: // bay bridge tile
+                            SetColor(new Color(1f, 0.3f, 0f));
                             break;
                         case 37: // park tile
-                            mr.material.color = Color.green;
+                        case 158: // park corner
+                            SetColor(new Color(0f, 0.69f, 0f));
                             break;
-                        
+
                         // unique buildings
                         case 90: // zoo
-                        case 180:
+                            SetColor(Color.magenta, "zoo");
+                            break;
                         case 98:
-                            mr.material.color = Color.magenta;
+                            SetColor(Color.magenta, "Fisherman's Wharf");
+                            break;
+                        case 86:
+                            SetColor(Color.magenta, "Pier 39");
                             break;
                         case 84:
-                            go.name += "Coit Tower";
-                            mr.material.color = Color.magenta;
+                            SetColor(Color.magenta, "Coit Tower");
                             break;
                         case 53:
-                            mr.material.color = Color.magenta;
+                            SetColor(Color.magenta);
                             break;
                         // city hall and macworld??
                         case 83:
                         case 99:
                         case 107:
-                            mr.material.color = Color.magenta;
+                            SetColor(Color.magenta);
                             break;
-                        
-                        case 75:
-                            mr.material.color = new Color(0.11f, 0.11f, 0.11f);
+                        case 93: // ghirardelli
+                            SetColor(Color.magenta, "Ghirardelli");
                             break;
-                        
+                        case 59:
+                            SetColor(Color.magenta, "palace of fine arts");
+                            break;
+                        case 81:
+                            SetColor(Color.magenta, "Japantown");
+                            break;
+                        case 106:
+                            SetColor(Color.magenta, "Saint Mary's");
+                            break;
+
                         case 85: // piers
-                            mr.material.color = new Color(0.86f, 0.55f, 0.56f);
+                            SetColor(new Color(0.86f, 0.55f, 0.56f));
+                            break;
+                        
+                        case 58: // flat concrete
+                            SetColor(new Color(0.83f, 0.83f, 0.83f));
+                            break;
+                        
+                        // generic blocks
+                        case 88:
+                            SetColor(new Color(0.29f, 0.33f, 0.38f));
+                            break;
+                        case 89:
+                            SetColor(new Color(0.32f, 0.35f, 0.41f));
+                            break;
+                        case 94:
+                        case 95:
+                            SetColor(new Color(0.35f, 0.38f, 0.44f));
+                            break;
+
+                        // rainbow buildings
+                        case 96:
+                        case 160:
+                        case 91:
+                            SetColor(new Color(0.29f, 0.55f, 0.67f));
                             break;
                         
                         // yellow walls
@@ -478,62 +527,74 @@ namespace Editor
                         case 112: // lower wall
                         case 232: // upper wall
                         case 126: // upper wall, uphill to left
-                            mr.material.color = Color.yellow;
+                        case 109: // corner wall
+                        case 189: // market street wall
+                            SetColor(Color.yellow);
                             break;
                         // dirt leading to cliff house
                         case 156:
                         case 157:
-                            mr.material.color = new Color(0.71f, 0.32f, 0.13f);
+                            SetColor(new Color(0.71f, 0.32f, 0.13f));
                             break;
                         case 168:
                         case 190:
                         case 114:
                         case 115:
-                            mr.material.color = new Color(0.01f, 0.57f, 0f);
+                            SetColor(new Color(0.01f, 0.57f, 0f));
                             break;
                         
                         // Hills
                         case 68:
-                            mr.material.color = new Color(0.78f, 0.78f, 0.78f);
+                            SetColor(new Color(0.78f, 0.78f, 0.78f));
                             break;
                         case 65:
                         case 161:
                         case 169:
-                            mr.material.color = new Color(0.63f, 0.63f, 0.63f);
+                            SetColor(new Color(0.63f, 0.63f, 0.63f));
                             break;
                         case 70:
-                            mr.material.color = new Color(0.29f, 0.29f, 0.29f);
+                            SetColor(new Color(0.29f, 0.29f, 0.29f));
                             break;
                         case 72:
                         case 175:
-                            mr.material.color = new Color(0.19f, 0.19f, 0.19f);
+                            SetColor(new Color(0.19f, 0.19f, 0.19f));
                             break;
                         case 64:
-                            mr.material.color = (new Color(0.78f, 0.78f, 0.78f) + new Color(0.63f, 0.63f, 0.63f)) / 2;
+                            SetColor((new Color(0.78f, 0.78f, 0.78f) + new Color(0.63f, 0.63f, 0.63f)) / 2);
                             break;
                         case 67:
                         case 171:
-                            mr.material.color = (new Color(0.63f, 0.63f, 0.63f) + new Color(0.29f, 0.29f, 0.29f)) / 2;
+                            SetColor((new Color(0.63f, 0.63f, 0.63f) + new Color(0.29f, 0.29f, 0.29f)) / 2);
                             break;
                         case 71:
-                            mr.material.color = (new Color(0.78f, 0.78f, 0.78f) + new Color(0.19f, 0.19f, 0.19f)) / 2;
+                            SetColor((new Color(0.78f, 0.78f, 0.78f) + new Color(0.19f, 0.19f, 0.19f)) / 2);
                             break;
                         case 74:
-                            mr.material.color = (new Color(0.29f, 0.29f, 0.29f) + new Color(0.19f, 0.19f, 0.19f)) / 2;
+                            SetColor((new Color(0.29f, 0.29f, 0.29f) + new Color(0.19f, 0.19f, 0.19f)) / 2);
                             break;
                         
                         case 165: // blue houses on grass
-                            mr.material.color = new Color(0.11f, 0.26f, 0.55f);
+                        case 26:
+                        case 27: // blue buildings on concrete
+                            SetColor(new Color(0.11f, 0.26f, 0.55f));
                             break;
+                        
 
+                        // freeway entrance
+                        case 55:
+                        case 148:
+                        case 229:
+                        case 230:
+                        case 136:
+                        case 180:
+                            SetColor(new Color(0.71f, 1f, 0f), "freeway entrance");
+                            break;
                         // freeway
                         case 120: // freeway up
                         case 154: // freeway curve right
-                            mr.material.color = new Color(0f, 0.07f, 0.33f);
+                            SetColor(new Color(0f, 0.08f, 0.46f));
                             break;
                     }
-
-                    go.transform.position = new Vector3(j, 0, i);
                 }
             }
         }
