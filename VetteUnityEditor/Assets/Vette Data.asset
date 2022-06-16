@@ -19,7 +19,7 @@ MonoBehaviour:
       id: 1000
       name: Main_Map
       fileLength: 4888
-      chunks:
+      rows:
       - headerA1: 0
         headerA2: 20
         headerB1: 0

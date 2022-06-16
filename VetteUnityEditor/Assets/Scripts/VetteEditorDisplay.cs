@@ -6,7 +6,7 @@ using Vette;
 [ExecuteInEditMode]
 public class VetteEditorDisplay : MonoBehaviour
 {
-    public VetteDataAsset vetteDataAsset;
+    public VetteRawDataAsset vetteDataAsset;
 
     // ObjResource obj;
     

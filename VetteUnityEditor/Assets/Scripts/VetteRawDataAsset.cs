@@ -8,7 +8,7 @@ public enum FileForkType
 }
 
 [CreateAssetMenu(fileName = "Vette Data", menuName = "Vette Data")]
-public class VetteDataAsset : ScriptableObject
+public class VetteRawDataAsset : ScriptableObject
 {
     public FileForkType fileFork;
     public string dataFilePath;

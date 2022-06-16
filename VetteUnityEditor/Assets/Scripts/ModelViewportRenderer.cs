@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ModelViewportRenderer : MonoBehaviour
 {
-    public VetteDataAsset data;
+    public VetteRawDataAsset data;
 
     public int modelId;
     public int maxFaces = 50;

@@ -5,7 +5,7 @@ using UnityEngine;
 [Serializable]
 public class VetteObjReference
 {
-    public int id;
+    public int id; // unscaled, the raw resource fork ID
     public GameObject prefab;
     public Mesh mesh;
 }
