@@ -1,5 +1,5 @@
 using System;
-using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -11,7 +11,7 @@ namespace Vette
         
         private const int PixelCount = 64;
         
-        public static Pattern Parse(BinaryReaderBigEndian reader)
+        public static Pattern Parse(ref ReadOnlySpan<byte> span)
         {
             var pattern = new Pattern
             {
@@ -28,7 +28,7 @@ namespace Vette
                 }
                 
                 // Unpack into two half bytes representing one of 16 colors
-                var b = reader.ReadByte();
+                var b = ReadByte(ref span);
                 pattern.pixelColorIndexes[i] = (byte)((b & 0xF0) >> 4);
                 pattern.pixelColorIndexes[i + 1] = (byte)(b & 0x0F);
             }

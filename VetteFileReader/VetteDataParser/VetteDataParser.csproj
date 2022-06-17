@@ -1,73 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>10.0.0</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{808378CD-7508-45B4-8D08-F18E20A388CA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <RootNamespace>VetteDataParser</RootNamespace>
-    <AssemblyName>VetteDataParser</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <LangVersion>7</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <DebugSymbols>True</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>False</Optimize>
-    <OutputPath>..\..\VetteUnityEditor\Assets\Plugins\</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Externalconsole>True</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <DebugType>none</DebugType>
-    <Optimize>True</Optimize>
-    <OutputPath>..\..\VetteUnityEditor\Assets\Plugins\</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Externalconsole>True</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Mono.Posix" />
-    <Reference Include="System" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="Code\DataTypes\DrawingMode.cs" />
-    <Compile Include="Code\DataTypes\MainMapResource.cs" />
-    <Compile Include="Code\DataTypes\MapRow.cs" />
-    <Compile Include="Code\DataTypes\ObjInstance.cs" />
-    <Compile Include="Code\DataTypes\ObjResource.cs" />
-    <Compile Include="Code\DataTypes\Pattern.cs" />
-    <Compile Include="Code\DataTypes\PatternsResource.cs" />
-    <Compile Include="Code\DataTypes\Polygon.cs" />
-    <Compile Include="Code\DataTypes\PatternName.cs" />
-    <Compile Include="Code\DataTypes\PolygonArray.cs" />
-    <Compile Include="Code\DataTypes\QuadDescriptor.cs" />
-    <Compile Include="Code\DataTypes\QuadDescriptorDataResource.cs" />
-    <Compile Include="Code\DataTypes\QuadInstance.cs" />
-    <Compile Include="Code\DataTypes\Road.cs" />
-    <Compile Include="Code\DataTypes\StreetNamesResource.cs" />
-    <Compile Include="Code\DataTypes\Vector.cs" />
-    <Compile Include="Code\DataTypes\VertexArray.cs" />
-    <Compile Include="Code\ResourceBase.cs" />
-    <Compile Include="Code\VetteData.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Code\ByteArrayExtension.cs" />
-    <Compile Include="Code\VetteResourceParser.cs" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <ItemGroup>
-    <Folder Include="Code\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\MacResourceFork\MacResourceFork.csproj">
-      <Project>{fc01a7e3-fd84-46f0-bce8-df3d4bbc158f}</Project>
-      <Name>MacResourceFork</Name>
-    </ProjectReference>
-  </ItemGroup>
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <AssemblyName>VetteDataParser</AssemblyName>
+        <RootNamespace>VetteDataParser</RootNamespace>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+      <OutputPath>../../VetteUnityEditor/Assets/Plugins/</OutputPath>
+    </PropertyGroup>
+
+    <PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+      <OutputPath>../../VetteUnityEditor/Assets/Plugins/</OutputPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MacResourceFork\MacResourceFork.csproj" />
+    </ItemGroup>
+
 </Project>

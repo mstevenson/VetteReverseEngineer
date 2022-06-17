@@ -1,11 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteDataParser", "VetteDataParser\VetteDataParser.csproj", "{808378CD-7508-45B4-8D08-F18E20A388CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteDataParser", "VetteDataParser\VetteDataParser.csproj", "{CBCB258A-0463-46AA-94F6-2C54F416680F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteUtil", "VetteUtil\VetteUtil.csproj", "{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacResourceFork", "MacResourceFork\MacResourceFork.csproj", "{F55BD1F8-DA10-49CF-8B61-FFF587316975}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MacResourceFork", "MacResourceFork\MacResourceFork.csproj", "{FC01A7E3-FD84-46F0-BCE8-DF3D4BBC158F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VetteUtil", "VetteUtil\VetteUtil.csproj", "{8AB1F9F2-5F48-4407-B7DA-D2D975F8DCE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,18 +13,18 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{808378CD-7508-45B4-8D08-F18E20A388CA}.Debug|x86.ActiveCfg = Debug|x86
-		{808378CD-7508-45B4-8D08-F18E20A388CA}.Debug|x86.Build.0 = Debug|x86
-		{808378CD-7508-45B4-8D08-F18E20A388CA}.Release|x86.ActiveCfg = Release|x86
-		{808378CD-7508-45B4-8D08-F18E20A388CA}.Release|x86.Build.0 = Release|x86
-		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Debug|x86.Build.0 = Debug|Any CPU
-		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Release|x86.ActiveCfg = Release|Any CPU
-		{8D13B4F3-0C34-4FCD-81D8-B19DA69E49CE}.Release|x86.Build.0 = Release|Any CPU
-		{FC01A7E3-FD84-46F0-BCE8-DF3D4BBC158F}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{FC01A7E3-FD84-46F0-BCE8-DF3D4BBC158F}.Debug|x86.Build.0 = Debug|Any CPU
-		{FC01A7E3-FD84-46F0-BCE8-DF3D4BBC158F}.Release|x86.ActiveCfg = Release|Any CPU
-		{FC01A7E3-FD84-46F0-BCE8-DF3D4BBC158F}.Release|x86.Build.0 = Release|Any CPU
+		{CBCB258A-0463-46AA-94F6-2C54F416680F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{CBCB258A-0463-46AA-94F6-2C54F416680F}.Debug|x86.Build.0 = Debug|Any CPU
+		{CBCB258A-0463-46AA-94F6-2C54F416680F}.Release|x86.ActiveCfg = Release|Any CPU
+		{CBCB258A-0463-46AA-94F6-2C54F416680F}.Release|x86.Build.0 = Release|Any CPU
+		{F55BD1F8-DA10-49CF-8B61-FFF587316975}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F55BD1F8-DA10-49CF-8B61-FFF587316975}.Debug|x86.Build.0 = Debug|Any CPU
+		{F55BD1F8-DA10-49CF-8B61-FFF587316975}.Release|x86.ActiveCfg = Release|Any CPU
+		{F55BD1F8-DA10-49CF-8B61-FFF587316975}.Release|x86.Build.0 = Release|Any CPU
+		{8AB1F9F2-5F48-4407-B7DA-D2D975F8DCE5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8AB1F9F2-5F48-4407-B7DA-D2D975F8DCE5}.Debug|x86.Build.0 = Debug|Any CPU
+		{8AB1F9F2-5F48-4407-B7DA-D2D975F8DCE5}.Release|x86.ActiveCfg = Release|Any CPU
+		{8AB1F9F2-5F48-4407-B7DA-D2D975F8DCE5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = VetteDataParser\VetteDataParser.csproj

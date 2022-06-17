@@ -1,7 +1,9 @@
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -19,12 +21,12 @@ namespace Vette
             Water = 0x3F
         }
 
-        public static QuadDescriptor Parse(BinaryReaderBigEndian reader)
+        public static QuadDescriptor Parse(ref ReadOnlySpan<byte> span)
         {
             var quad = new QuadDescriptor
             {
-                unknown = reader.ReadUInt16(),
-                collisionModel = reader.ReadUInt16(),
+                unknown = ReadUInt16(ref span),
+                collisionModel = ReadUInt16(ref span),
                 roads = new List<Road>(),
                 objects = new List<ObjInstance>()
             };
@@ -32,18 +34,18 @@ namespace Vette
             // Console.WriteLine($"QUAD ({reader.BaseStream.Position:X4}):  {quad.collisionModel}");
             // Console.WriteLine("  road search");
             
-            while (!DetectDelimiter(reader))
+            while (span.Length > 0 && !DetectDelimiter(ref span))
             {
-                var road = Road.Parse(reader);
+                var road = Road.Parse(ref span);
                 quad.roads.Add(road);
                 // Console.WriteLine($"    read road: {road.roadType}");
             }
             
             // Console.WriteLine("  obj search");
             
-            while (!DetectDelimiter(reader))
+            while (span.Length > 0 &&!DetectDelimiter(ref span))
             {
-                var obj = ObjInstance.Parse(reader);
+                var obj = ObjInstance.Parse(ref span);
                 quad.objects.Add(obj);
                 // Console.WriteLine("    read obj: " + obj.objectId);
             }
@@ -51,15 +53,9 @@ namespace Vette
             return quad;
         }
         
-        private static bool DetectDelimiter(BinaryReader reader)
+        private static bool DetectDelimiter(ref ReadOnlySpan<byte> span)
         {
-            var originalPosition = reader.BaseStream.Position;
-            var foundDelimiter = reader.ReadUInt16() == 0xFFFF;
-            if (!foundDelimiter)
-            {
-                reader.BaseStream.Position = originalPosition;
-            }
-            return foundDelimiter;
+            return BinaryPrimitives.ReadUInt16BigEndian(span) == 0xFFFF;
         }
     }
 }

@@ -1,5 +1,6 @@
 using System;
 using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -10,13 +11,13 @@ namespace Vette
         public int flagA;
         public int flagB;
         
-        public static QuadInstance Parse(BinaryReaderBigEndian reader)
+        public static QuadInstance Parse(ref ReadOnlySpan<byte> span)
         {
             return new QuadInstance
             {
-                quadDescriptorIndex = reader.ReadUInt16(),
-                flagA = reader.ReadByte(),
-                flagB = reader.ReadByte()
+                quadDescriptorIndex = ReadUInt16(ref span),
+                flagA = ReadByte(ref span),
+                flagB = ReadByte(ref span)
             };
         }
     }

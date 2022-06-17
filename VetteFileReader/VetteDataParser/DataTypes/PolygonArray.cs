@@ -1,5 +1,5 @@
 using System;
-using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -9,16 +9,16 @@ namespace Vette
         public int polyCount;
         public Polygon[] polys;
 
-        public static PolygonArray Parse(BinaryReaderBigEndian reader)
+        public static PolygonArray Parse(ref ReadOnlySpan<byte> span)
         {
             var p = new PolygonArray();
 			
-            p.polyCount = reader.ReadInt16() + 1;
+            p.polyCount = ReadInt16(ref span) + 1;
             p.polys = new Polygon[p.polyCount];
 
             for (int i = 0; i < p.polyCount; i++)
             {
-                p.polys[i] = Polygon.Parse(reader);
+                p.polys[i] = Polygon.Parse(ref span);
             }
 
             return p;

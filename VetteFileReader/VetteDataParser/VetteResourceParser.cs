@@ -1,20 +1,15 @@
-using System;
-using System.IO;
 using MacResourceFork;
 
 namespace Vette
 {
-	public class VetteResourceParser
+	public static class VetteResourceParser
 	{
 		/// <summary>
 		/// Parse binary data from a single resource extracted from a resource fork.
 		/// </summary>
 		public static T Parse<T>(byte[] bytes, int id, string name) where T : ResourceBase, new()
 		{
-			using (var stream = new MemoryStream(bytes))
-			{
-				return ParseInternal<T>(stream, id, name);
-			}
+			return ParseInternal<T>(bytes, id, name);
 		}
 
 		/// <summary>
@@ -22,19 +17,14 @@ namespace Vette
 		/// </summary>
 		public static T Parse<T>(Resource resource) where T : ResourceBase, new()
 		{
-			using (var stream = new MemoryStream(resource.data))
-			{
-				return ParseInternal<T>(stream, resource.id, resource.name);
-			}
+			return ParseInternal<T>(resource.Data, resource.Id, resource.Name);
 		}
 
-		private static T ParseInternal<T>(Stream stream, int id, string name) where T : ResourceBase, new()
+		private static T ParseInternal<T>(byte[] bytes, int id, string name) where T : ResourceBase, new()
 		{
 			var resource = new T();
-			using (var reader = new BinaryReaderBigEndian(stream))
-			{
-				resource.Parse(reader);
-			}
+			var span = new ReadOnlySpan<byte>(bytes);
+			resource.Parse(ref span);
 
 			resource.id = id;
 			resource.name = name;

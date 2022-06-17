@@ -2,23 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
 	[Serializable]
 	public class StreetNamesResource : ResourceBase
 	{
-		public List<string> names = new List<string>();
+		public List<string> names = new();
 		
-		public override void Parse(BinaryReaderBigEndian reader)
+		public override void Parse(ref ReadOnlySpan<byte> span)
 		{
 			// header
-			reader.ReadUInt16();
+			ReadUInt16(ref span);
 			
-			while (reader.BaseStream.Position < reader.BaseStream.Length)
+			while (span.Length > 0)
 			{
-				var length = reader.ReadByte();
-				var bytes = reader.ReadBytes(length);
+				var length = ReadByte(ref span);
+				var bytes = ReadBytes(ref span, length);
 				var streetName = Encoding.GetEncoding(10000).GetString(bytes);
 				names.Add(streetName);
 			}

@@ -7,13 +7,13 @@ namespace Vette
     [Serializable]
     public class PatternsResource : ResourceBase
     {
-        public List<Pattern> patterns = new List<Pattern>();
+        public List<Pattern> patterns = new();
         
-        public override void Parse(BinaryReaderBigEndian reader)
+        public override void Parse(ref ReadOnlySpan<byte> span)
         {
-            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            while (span.Length > 0)
             {
-                var pattern = Pattern.Parse(reader);
+                var pattern = Pattern.Parse(ref span);
                 patterns.Add(pattern);
             }
         }

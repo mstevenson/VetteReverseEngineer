@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -8,16 +8,16 @@ namespace Vette
     public class MainMapResource : ResourceBase
     {
         public int fileLength;
-        public List<MapRow> rows = new List<MapRow>();
+        public List<MapRow> rows = new();
         
-        public override void Parse(BinaryReaderBigEndian reader)
+        public override void Parse(ref ReadOnlySpan<byte> span)
         {
-            fileLength = reader.ReadUInt16();
+            fileLength = ReadUInt16(ref span);
             
-            while (reader.BaseStream.Position != reader.BaseStream.Length)
+            while (span.Length > 0)
             {
                 // Main Map rows go from south to north. Columns go from west to east.
-                var row = MapRow.Parse(reader);
+                var row = MapRow.Parse(ref span);
                 rows.Add(row);
             }
         }

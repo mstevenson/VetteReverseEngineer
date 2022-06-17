@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using MacResourceFork;
 
 namespace Vette
@@ -10,23 +7,23 @@ namespace Vette
     {
         public MainMapResource mainMap;
         public QuadDescriptorDataResource quadDescriptors;
-        public List<ObjResource> objs = new List<ObjResource>();
-        public List<string> streetNames = new List<string>();
-        public List<PatternsResource> patterns = new List<PatternsResource>();
+        public List<ObjResource> objs = new();
+        public List<string> streetNames = new();
+        public List<PatternsResource> patterns = new();
         
         public static VetteData LoadDataFork(string filePath)
         {
             var resourceData = ResourceForkParser.LoadDataFork(filePath);
-            return Parse(resourceData);
+            return Parse(ref resourceData);
         }
         
         public static VetteData LoadResourceFork(string filePath)
         {
             var resourceData = ResourceForkParser.LoadResourceFork(filePath);
-            return Parse(resourceData);
+            return Parse(ref resourceData);
         }
 
-        private static VetteData Parse(ResourceFork resourceFork)
+        private static VetteData Parse(ref ResourceFork resourceFork)
         {
             var data = new VetteData();
 

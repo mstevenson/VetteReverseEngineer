@@ -1,5 +1,5 @@
 using System;
-using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -10,12 +10,12 @@ namespace Vette
         public int objectId;
         public Vector position;
 
-        public static ObjInstance Parse(BinaryReaderBigEndian reader)
+        public static ObjInstance Parse(ref ReadOnlySpan<byte> span)
         {
             return new ObjInstance
             {
-                objectId = reader.ReadUInt16(),
-                position = Vector.Parse(reader)
+                objectId = ReadUInt16(ref span),
+                position = Vector.Parse(ref span)
             };
         }
     }

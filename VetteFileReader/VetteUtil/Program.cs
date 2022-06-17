@@ -1,33 +1,36 @@
-﻿using System;
-using System.IO;
-using MacResourceFork;
+﻿using MacResourceFork;
 using Vette;
 
-class App
+if (args.Length < 1)
 {
-    static void Main(string[] args)
-    {
-        if (args.Length < 1)
-        {
-            return;
-        }
-        
-        string filePath = args[0];
-        
-        if (!File.Exists(filePath))
-        {
-            Console.WriteLine($"File doesn't exist: {filePath}");
-            return;
-        }
-        
-        // ResourceForkParser.LogOutput = true;
-        
-        // var vetteData = VetteData.Parse(filePath);
-        
-        // Console.WriteLine($"main map chunks: {vetteData.mainMap.chunks}");
-        // Console.WriteLine($"quads: {vetteData.quadDescriptors.Count}");
-        // Console.WriteLine($"objs: {vetteData.objs.Count}");
-        // Console.WriteLine($"patterns: {vetteData.patterns.Count}");
-        // Console.WriteLine($"streets: {vetteData.streetNames.Count}");
-    }
+    Console.WriteLine("Usage: VetteUtil.exe <file>");
+    return 1;
 }
+
+string filePath = args[0];
+
+if (!File.Exists(filePath))
+{
+    Console.WriteLine($"File doesn't exist: {filePath}");
+    return 1;
+}
+
+ResourceForkParser.LogOutput = true;
+
+try
+{
+    var vetteData = VetteData.LoadResourceFork(filePath);    
+    
+    Console.WriteLine($"main map rows: {vetteData.mainMap.rows}");
+    Console.WriteLine($"quads: {vetteData.quadDescriptors.quads.Count}");
+    Console.WriteLine($"objs: {vetteData.objs.Count}");
+    Console.WriteLine($"patterns: {vetteData.patterns.Count}");
+    Console.WriteLine($"streets: {vetteData.streetNames.Count}");
+}
+catch (FileLoadException ex)
+{
+    Console.WriteLine($"Error loading file: {ex.Message}");
+    return 1;
+}
+
+return 0;

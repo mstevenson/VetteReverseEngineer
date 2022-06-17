@@ -1,5 +1,5 @@
 using System;
-using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -16,18 +16,18 @@ namespace Vette
         public int e;
         public int f;
         
-        public static Road Parse(BinaryReaderBigEndian reader)
+        public static Road Parse(ref ReadOnlySpan<byte> span)
         {
             var r = new Road
             {
-                roadType = reader.ReadUInt16(),
+                roadType = ReadUInt16(ref span),
                 // Flags of some kind
-                a = reader.ReadByte(),
-                b = reader.ReadByte(),
-                c = reader.ReadByte(),
-                d = reader.ReadByte(),
-                e = reader.ReadByte(),
-                f = reader.ReadByte()
+                a = ReadByte(ref span),
+                b = ReadByte(ref span),
+                c = ReadByte(ref span),
+                d = ReadByte(ref span),
+                e = ReadByte(ref span),
+                f = ReadByte(ref span)
             };
 
             return r;

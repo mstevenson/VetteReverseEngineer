@@ -1,6 +1,5 @@
 using System;
-using System.IO;
-using MacResourceFork;
+using static MacResourceFork.BinaryReaderBigEndian;
 
 namespace Vette
 {
@@ -13,18 +12,18 @@ namespace Vette
         // When changing them on car models, parts of the car disappear.
         public Vector[] vertices;
         
-        public static VertexArray Parse(BinaryReaderBigEndian reader)
+        public static VertexArray Parse(ref ReadOnlySpan<byte> span)
         {
             var v = new VertexArray();
 			
-            v.vertexCount = reader.ReadUInt16() + 1; // number of vertices
+            v.vertexCount = ReadUInt16(ref span) + 1; // number of vertices
             v.vertices = new Vector[v.vertexCount];
 			
             for (int i = 0; i < v.vertexCount; i++)
             {
                 // 0xFFFF padding at beginning
-                reader.BaseStream.Seek(2, SeekOrigin.Current);
-                v.vertices[i] = Vector.Parse(reader); // y axis is inverted
+                ReadBytes(ref span, 2);
+                v.vertices[i] = Vector.Parse(ref span); // y axis is inverted
             }
 
             return v;
