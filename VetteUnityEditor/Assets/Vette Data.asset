@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84644483e038a4d2d90841fcd34077c6, type: 3}
   m_Name: Vette Data
   m_EditorClassIdentifier: 
-  fileFork: 0
-  dataFilePath: /Users/mike/Desktop/Vette Project/vettedata.rsrc
+  fileFork: 1
+  dataFilePath: ../../VETTE! Folder/(Folder) Color VETTE!/VETTE!.Data
   data:
     mainMap:
       id: 1000
