@@ -22,12 +22,26 @@ public class VetteTools : EditorWindow
         
         if (GUILayout.Button("Create OBJ prefabs"))
         {
-            VetteAssetImporter.CreateOBJPrefabs(dataAsset);
+            try
+            {
+                VetteAssetImporter.CreateOBJPrefabs(dataAsset);
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
         }
 
         if (GUILayout.Button("Create QUAD prefabs"))
         {
-            VetteAssetImporter.CreateQuadPrefabs(dataAsset.data.quadDescriptors.quads);
+            try
+            {
+                VetteAssetImporter.CreateQuadPrefabs(dataAsset.data.quadDescriptors.quads);
+            }
+            finally
+            {
+                EditorUtility.ClearProgressBar();
+            }
         }
 
         if (GUILayout.Button("Instantiate Main Map"))

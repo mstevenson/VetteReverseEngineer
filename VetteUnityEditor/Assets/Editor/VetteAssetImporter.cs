@@ -5,6 +5,7 @@ using System.Linq;
 using DefaultNamespace;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.Assertions;
 using Vette;
 using Object = UnityEngine.Object;
 
@@ -48,6 +49,7 @@ public static class VetteAssetImporter
     public static void CreateOBJPrefabs(VetteRawDataAsset rawData)
     {
         var db = GetOrCreateAssetDatabase();
+        db.objs.Clear();
         
         // Create pattern materials to apply to new meshes
 
@@ -58,29 +60,28 @@ public static class VetteAssetImporter
         
         var objsFolder = CreateAssetFolder("Objects");
         var meshesFolder = CreateAssetFolder("Meshes");
-        
-        foreach (var obj in rawData.data.objs)
+
+        for (var index = 0; index < rawData.data.objs.Count; index++)
         {
-            var prefabRef = new VetteObjReference
-            {
-                id = obj.id
-            };
+            var obj = rawData.data.objs[index];
+
+            EditorUtility.DisplayProgressBar("Importing OBJs", obj.name, index / (float)rawData.data.objs.Count);
 
             // Create mesh assets
-            
+
             var (mesh, patternIndexes) = CreateMeshForOBJ(obj);
             if (mesh == null)
             {
                 continue;
             }
-            
+
             // Create OBJ object with mesh
             
             var go = new GameObject();
             var objComponent = go.AddComponent<ObjComponent>();
             objComponent.objName = obj.name;
             objComponent.id = obj.id;
-            
+
             var objName = $"{obj.id} {obj.name}";
             go.name = objName;
 
@@ -99,8 +100,9 @@ public static class VetteAssetImporter
                 var mat = patternMaterials[patternIndexes[i]];
                 objMaterials[i] = mat;
             }
+
             mr.materials = objMaterials;
-            
+
             var path = $"{objsFolder}/{mesh.name}.prefab";
             PrefabUtility.SaveAsPrefabAsset(go, path);
             AssetDatabase.Refresh();
@@ -109,11 +111,17 @@ public static class VetteAssetImporter
 
             var goPrefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
             
-            prefabRef.prefab = goPrefab;
-            prefabRef.mesh = mesh;
+            var prefabRef = new VetteObjReference
+            {
+                id = obj.id,
+                prefab = goPrefab,
+                mesh = mesh
+            };
+            Assert.IsNotNull(prefabRef.prefab, $"Prefab is null for {objName}");
+            Assert.IsNotNull(prefabRef.mesh, $"Mesh is null for {objName}");
             db.objs.Add(prefabRef);
-            EditorUtility.SetDirty(db);
         }
+        EditorUtility.SetDirty(db);
     }
     
     public static (Mesh mesh, int[] patternIndexes) CreateMeshForOBJ(ObjResource vetteObj)
@@ -218,6 +226,7 @@ public static class VetteAssetImporter
     public static Material[] CreatePatternMaterials(PatternsResource patterns, Color32[] palette)
     {
         var db = GetOrCreateAssetDatabase();
+        db.patternMaterials.Clear();
         
         var patternsFolder = CreateAssetFolder("Patterns");
 
@@ -226,6 +235,8 @@ public static class VetteAssetImporter
         
         for (var patternIndex = 0; patternIndex < patterns.patterns.Count; patternIndex++)
         {
+            EditorUtility.DisplayProgressBar("Importing PATNs", $"Pattern {patternIndex}", patternIndex / (float)patterns.patterns.Count);
+            
             var pattern = patterns.patterns[patternIndex];
             var tex = new Texture2D(8, 8, TextureFormat.RGB24, 0, false);
             var pixelColors = new Color32[64];
@@ -266,6 +277,7 @@ public static class VetteAssetImporter
             db.patternMaterials.Add(new VetteMaterialReference { patternId = i, material = mat});
         }
 
+        EditorUtility.SetDirty(db);
         AssetDatabase.Refresh();
         
         return mats;
@@ -287,6 +299,7 @@ public static class VetteAssetImporter
     public static void CreateQuadPrefabs(List<QuadDescriptor> quads)
     {
         var db = GetOrCreateAssetDatabase();
+        db.quads.Clear();
         
         for (var i = 0; i < quads.Count; i++)
         {
@@ -294,6 +307,8 @@ public static class VetteAssetImporter
             {
                 name = $"Quad {i}"
             };
+            
+            EditorUtility.DisplayProgressBar("Importing QUADs", quad.name, i / (float)quads.Count);
 
             foreach (var quadObjInstance in quads[i].objects)
             {
