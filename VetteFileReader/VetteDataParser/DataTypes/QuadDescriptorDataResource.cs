@@ -6,7 +6,7 @@ namespace Vette
     public class QuadDescriptorDataResource : ResourceBase
     {
         public uint fileLength;
-        public List<QuadDescriptor> quads = new();
+        public List<QuadDescriptor> quads;
         
         public override void Parse(ref ReadOnlySpan<byte> span)
         {
