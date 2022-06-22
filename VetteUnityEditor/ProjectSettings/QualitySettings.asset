@@ -48,6 +48,7 @@ QualitySettings:
     FlashPlayer: 0
     GLES Emulation: 0
     PS3: 0
+    Server: 0
     Standalone: 0
     Tizen: 0
     WP8: 0
